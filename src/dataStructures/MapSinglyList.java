@@ -15,6 +15,8 @@ class MapSinglyList<K,V> implements Map<K, V> {
 
     public MapSinglyList() {
         //TODO: Left as exercise
+        head = null;
+        size = 0;
     }
 
     /**
@@ -22,10 +24,10 @@ class MapSinglyList<K,V> implements Map<K, V> {
      *
      * @return true if dictionary is empty
      */
-  
+
     public boolean isEmpty() {
 	//TODO: Left as exercise
-        return false;
+        return size == 0;
     }
 
     /**
@@ -36,7 +38,7 @@ class MapSinglyList<K,V> implements Map<K, V> {
     @Override
     public int size() {
 	//TODO: Left as exercise
-        return 0;
+        return size;
     }
 
     /**
@@ -50,9 +52,15 @@ class MapSinglyList<K,V> implements Map<K, V> {
     @Override
     public V get(K key) {
         //TODO: Left as exercise
+        if(key == null) return null;
+        SinglyListNode<Entry<K,V>> current = head;
+        while(current != null){
+            if(current.getElement().key().equals(key)) return current.getElement().value();
+            current = current.getNext();
+        }
         return null;
     }
-    
+
 
     /**
      * If there is an entry in the dictionary whose key is the specified key,
@@ -64,9 +72,23 @@ class MapSinglyList<K,V> implements Map<K, V> {
      * @return previous value associated with key,
      * or null if the dictionary does not have an entry with that key
      */
-    
+
     public V put(K key, V value) {
         //TODO: Left as an exercise.
+        if(key == null || value == null) return null;
+
+        SinglyListNode<Entry<K,V>> current = head;
+        while(current != null){
+            if(current.getElement().key().equals(key)){
+                V oldValue = current.getElement().value();
+                current.setElement(new Entry<>(key,value));
+                return oldValue;
+            }
+            current = current.getNext();
+        }
+        Entry<K,V> newEntry = new Entry<>(key, value);
+        head = new SinglyListNode<>(newEntry, head);
+        size++;
         return null;
     }
 
@@ -81,6 +103,25 @@ class MapSinglyList<K,V> implements Map<K, V> {
      */
     public V remove(K key) {
         //TODO: Left as an exercise.
+        if(key == null) return null;
+
+        if (head != null && head.getElement().key().equals(key)) {
+            V removedValue = head.getElement().value();
+            head = head.getNext();
+            size--;
+            return removedValue;
+        }
+
+        SinglyListNode<Entry<K,V>> current = head;
+        while (current.getNext() != null) {
+            if (current.getNext().getElement().key().equals(key)) {
+                V removedValue = current.getNext().getElement().value();
+                current.setNext(current.getNext().getNext());
+                size--;
+                return removedValue;
+            }
+            current = current.getNext();
+        }
         return null;
     }
 
@@ -98,7 +139,7 @@ class MapSinglyList<K,V> implements Map<K, V> {
      *
      * @return iterator of the values in the dictionary
      */
-@SuppressWarnings({"unchecked","rawtypes"})
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<V> values() {
         return new ValuesIterator(iterator());
     }
@@ -108,8 +149,9 @@ class MapSinglyList<K,V> implements Map<K, V> {
      *
      * @return iterator of the keys in the dictionary
      */
-@SuppressWarnings({"unchecked","rawtypes"})
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<K> keys() {
+
         return new KeysIterator(iterator());
     }
 

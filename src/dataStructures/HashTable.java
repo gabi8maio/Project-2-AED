@@ -23,6 +23,7 @@ package dataStructures;
      public HashTable(int capacity) {
          currentSize=0;
          size=capacity;
+         maxSize = capacity;
      }
 
      // Public Static Methods
@@ -46,9 +47,27 @@ package dataStructures;
      // than Integer.MAX VALUE.
      protected static int nextPrime( int number ){
          //TODO: Left as exercise
-        
-         return 0;
+         if (number <= 2) return 2;
+         if (number % 2 == 0) number++;
+
+         while (!isPrime(number)) {
+             number += 2;
+             // Check for integer overflow
+             if (number < 0) return 0;
+         }
+         return number;
      }
+
+    private static boolean isPrime(int n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 == 0 || n % 3 == 0) return false;
+
+        for (int i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) return false;
+        }
+        return true;
+    }
 
      // Returns true iff the hash table cannot contain more entries.
      protected boolean isFull( ){

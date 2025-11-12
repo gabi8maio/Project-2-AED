@@ -11,39 +11,31 @@ class KeysIterator<E> implements Iterator<E> {
 
     
      //TODO: Left as an exercise.
-
+     private final Iterator<Map.Entry<E, ?>> entryIterator;
 
     public KeysIterator(Iterator<Map.Entry<E,?>> it) {
        //TODO: Left as an exercise.
+        this.entryIterator = it;
     }
 
-    /**
-     * Returns true if next would return an element
-     * rather than throwing an exception.
-     *
-     * @return true iff the iteration has more elements
-     */
+    @Override
     public boolean hasNext() {
 	//TODO: Left as an exercise.
-        return false;
+        return entryIterator.hasNext();
     }
 
-    /**
-     * Returns the next element in the iteration.
-     *
-     * @return the next element in the iteration
-     * @throws NoSuchElementException - if call is made without verifying pre-condition
-     */
+    @Override
     public E next() {
 	//TODO: Left as an exercise.
-        return null;
+        if (!hasNext()) throw new NoSuchElementException();
+
+        Map.Entry<E, ?> entry = entryIterator.next();
+        return entry.key();
     }
 
-    /**
-     * Restarts the iteration.
-     * After rewind, if the iteration is not empty, next will return the first element.
-     */
+    @Override
     public void rewind() {
         //TODO: Left as an exercise.
+        entryIterator.rewind();
     }
 }

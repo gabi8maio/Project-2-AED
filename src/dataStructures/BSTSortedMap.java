@@ -61,8 +61,16 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
 
     private BTNode<Entry<K,V>> getNode(BTNode<Entry<K,V>> node, K key) {
         //TODO: Left as an exercise.
-        
-        return null;
+
+        if (node == null) return null;
+
+        int comparison = key.compareTo(node.getElement().key());
+        if (comparison == 0)
+            return node;
+        else if (comparison < 0)
+            return getNode((BTNode<Entry<K,V>>) node.getLeftChild(), key);
+        else
+            return getNode((BTNode<Entry<K,V>>) node.getRightChild(), key);
     }
 
     /**
@@ -78,7 +86,40 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
     @Override
     public V put(K key, V value) {
         //TODO: Left as an exercise.
-       
+
+        Entry<K,V> newEntry = new Entry<>(key, value);
+
+        if (isEmpty()) {
+            root = new BTNode<>(newEntry, null, null, null);
+            return null;
+        }
+
+        BTNode<Entry<K,V>> current = (BTNode<Entry<K,V>>) root;
+        BTNode<Entry<K,V>> parent = null;
+
+        while (current != null) {
+            parent = current;
+            int comparison = key.compareTo(current.getElement().key());
+
+            if (comparison == 0) {
+                V oldValue = current.getElement().value();
+                current.setElement(newEntry);
+                return oldValue;
+            }
+
+            current = (comparison < 0) ?
+                    (BTNode<Entry<K,V>>) current.getLeftChild() :
+                    (BTNode<Entry<K,V>>) current.getRightChild();
+        }
+
+
+        BTNode<Entry<K,V>> newNode = new BTNode<>(newEntry, parent, null, null);
+        if (key.compareTo(parent.getElement().key()) < 0) {
+            parent.setLeftChild(newNode);
+        } else
+            parent.setRightChild(newNode);
+
+
         return null;
     }
 
@@ -95,7 +136,58 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
     @Override
     public V remove(K key) {
         //TODO: Left as an exercise.
-       
+        BTNode<Entry<K,V>> current = (BTNode<Entry<K,V>>) root;
+        BTNode<Entry<K,V>> parent = null;
+
+        while (current != null) {
+            int comparison = key.compareTo(current.getElement().key());
+
+            if (comparison == 0) {
+                V oldValue = current.getElement().value();
+
+                if (current.getLeftChild() != null && current.getRightChild() != null) {
+                    // Node with two children - find successor
+                    BTNode<Entry<K,V>> successor = (BTNode<Entry<K,V>>) current.getRightChild();
+                    BTNode<Entry<K,V>> successorParent = current;
+
+                    while (successor.getLeftChild() != null) {
+                        successorParent = successor;
+                        successor = (BTNode<Entry<K,V>>) successor.getLeftChild();
+                    }
+
+                    // Replace current with successor's data
+                    current.setElement(successor.getElement());
+
+                    // Remove the successor (which has at most one right child)
+                    if (successorParent.getLeftChild() == successor) {
+                        successorParent.setLeftChild(successor.getRightChild());
+                    } else
+                        successorParent.setRightChild(successor.getRightChild());
+
+
+                    if (successor.getRightChild() != null)
+                        ((BTNode<Entry<K,V>>) successor.getRightChild()).setParent(successorParent);
+
+                } else {
+                    BTNode<Entry<K,V>> child = (current.getLeftChild() != null) ? (BTNode<Entry<K,V>>) current.getLeftChild() : (BTNode<Entry<K,V>>) current.getRightChild();
+
+                    if (parent == null) root = child;
+                    else if (parent.getLeftChild() == current) parent.setLeftChild(child);
+                     else parent.setRightChild(child);
+
+
+                    if (child != null) child.setParent(parent);
+
+                }
+
+                return oldValue;
+            }
+
+            parent = current;
+            current = (comparison < 0) ?
+                    (BTNode<Entry<K,V>>) current.getLeftChild() :
+                    (BTNode<Entry<K,V>>) current.getRightChild();
+        }
         return null;
     }
 

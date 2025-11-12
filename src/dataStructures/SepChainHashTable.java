@@ -16,12 +16,20 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     private Map<K,V>[] table;
 
     public SepChainHashTable( ){
-        this(DEFAULT_CAPACITY);
+        super(DEFAULT_CAPACITY);
     }
     
     public SepChainHashTable( int capacity ){
         super(capacity);
-       //TODO: Left as exercise
+        //TODO: Left as exercise
+        int tableSize = nextPrime((int)(capacity / IDEAL_LOAD_FACTOR));
+        if (tableSize == 0) tableSize = nextPrime(DEFAULT_CAPACITY);
+
+        @SuppressWarnings("unchecked")
+        Map<K,V>[] temp = (Map<K,V>[]) new Map[tableSize];
+        table = temp;
+
+        maxSize = (int)(table.length * MAX_LOAD_FACTOR);
     }
 
     // Returns the hash value of the specified key.
@@ -38,7 +46,12 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     public V get(K key) {
         //TODO: Left as an exercise.
-    	return null;
+        if(key == null) return null;
+        int index = hash(key);
+        if (table[index] != null) {
+            return table[index].get(key);
+        }
+        return null;
     }
 
     /**
@@ -52,16 +65,45 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      * or null if the dictionary does not have an entry with that key
      */
     public V put(K key, V value) {
-        if (isFull())
-            rehash();
+        if (isFull()) rehash();
         //TODO: Left as an exercise.
-       
-        return null;
+        int index;
+        if(table == null) index = 0;
+        else index = hash(key);
+
+        assert table != null;
+        if (table[index] == null)
+            table[index] = new MapSinglyList<>();
+
+        currentSize++;
+        return table[index].put(key, value);
     }
 
 
     private void rehash() {
         //TODO: Left as an exercise.
+        Map<K,V>[] oldTable = table;
+        int currentSizeLocal = currentSize;
+        int newCapacity = nextPrime(table.length * 2);
+        if (newCapacity == 0) newCapacity = nextPrime(DEFAULT_CAPACITY);
+
+        @SuppressWarnings("unchecked")
+        Map<K,V>[] newTable = (Map<K,V>[]) new Map[newCapacity];
+        table = newTable;
+        maxSize = (int)(table.length * MAX_LOAD_FACTOR);
+        currentSize = 0;
+
+        // Reinsert all entries from old table
+        for (Map<K, V> map : oldTable) {
+            if (map != null) {
+                Iterator<Entry<K, V>> it = map.iterator();
+                while (it.hasNext()) {
+                    Entry<K, V> entry = it.next();
+                    this.put(entry.key(), entry.value());
+                }
+            }
+        }
+        currentSize = currentSizeLocal;
     }
 
     /**
@@ -75,6 +117,14 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     public V remove(K key) {
         //TODO: Left as an exercise.
+        if (key == null) return null;
+
+        int index = hash(key);
+        if (table[index] != null) {
+            V removedValue = table[index].remove(key);
+            if (removedValue != null) currentSize--;
+            return removedValue;
+        }
         return null;
     }
 

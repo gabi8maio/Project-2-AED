@@ -11,9 +11,15 @@ import dataStructures.exceptions.NoSuchElementException;
 class SepChainHashTableIterator<K,V> implements Iterator<Map.Entry<K,V>> {
 
     //TODO: Left as exercise
+    private final Map<K,V>[] table;
+    private int currentBucket;
+    private Iterator<Map.Entry<K,V>> currentIterator;
 
     public SepChainHashTableIterator(Map<K,V>[] table) {
         //TODO: Left as exercise
+        this.table = table;
+        currentBucket = -1;
+        currentIterator = null;
     }
 
     /**
@@ -24,6 +30,10 @@ class SepChainHashTableIterator<K,V> implements Iterator<Map.Entry<K,V>> {
      */
     public boolean hasNext() {
 	//TODO: Left as exercise
+        if (currentIterator != null && currentIterator.hasNext()) return true;
+
+        for (int i = currentBucket + 1; i < table.length; i++)
+            if (table[i] != null && !table[i].isEmpty()) return true;
         return false;
     }
 
@@ -35,7 +45,19 @@ class SepChainHashTableIterator<K,V> implements Iterator<Map.Entry<K,V>> {
      */
     public Map.Entry<K,V> next() {
         //TODO: Left as exercise
-        return null;
+        if (!hasNext()) throw new NoSuchElementException();
+
+        if (currentIterator != null && currentIterator.hasNext()) return currentIterator.next();
+
+        currentBucket++;
+        while (currentBucket < table.length) {
+            if (table[currentBucket] != null && !table[currentBucket].isEmpty()) {
+                currentIterator = table[currentBucket].iterator();
+                return currentIterator.next();
+            }
+            currentBucket++;
+        }
+        throw new NoSuchElementException();
     }
 
     /**
@@ -44,6 +66,7 @@ class SepChainHashTableIterator<K,V> implements Iterator<Map.Entry<K,V>> {
      */
     public void rewind() {
         //TODO: Left as exercise
+        currentBucket = -1;
+        currentIterator = null;
     }
 }
-
