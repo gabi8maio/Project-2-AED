@@ -7,7 +7,7 @@ import dataStructures.*;
 import dataStructures.exceptions.InvalidPositionException;
 
 import java.io.Serializable;
-
+import java.util.Hashtable;
 
 
 public class AreaClass implements Serializable, Area {
@@ -19,10 +19,14 @@ public class AreaClass implements Serializable, Area {
     private final long leftLongitude;
     private final long rightLongitude;
     private final String areaName;
-    private final DoublyLinkedList<Services> services;
-    private final SortedDoublyLinkedList<Services> servicesByRank;
-    private final SortedList<Students> allStudents;
-    private final DoublyLinkedList<Students> studentsByCountry;
+
+
+    private final Map<String, Services> services;
+    private final SortedMap<Integer,TwoWayList<Services>> servicesByRank;
+    private final Map<String, Students> allStudents;
+    private final Map<String,SortedList<Students>> studentsByCountry;
+
+
     int updateCounter;
     int counterOfServicesInsertion;
 
@@ -33,10 +37,10 @@ public class AreaClass implements Serializable, Area {
         this.bottomLatitude = bottomLatitude;
         this.leftLongitude = leftLongitude;
         this.rightLongitude = rightLongitude;
-        services = new DoublyLinkedList<>();
-        studentsByCountry = new DoublyLinkedList<>();
-        allStudents = new SortedDoublyLinkedList<>(new studentComparatorByName()); // Need to change
-        servicesByRank = new SortedDoublyLinkedList<>(new ServiceComparatorByStars()); // Need to change
+        services = new SepChainHashTable<>();
+        studentsByCountry = new SepChainHashTable<>();
+        allStudents = new AVLSortedMap<>();
+        servicesByRank = new AVLSortedMap<>();
         updateCounter = 0;
         counterOfServicesInsertion =0;
     }

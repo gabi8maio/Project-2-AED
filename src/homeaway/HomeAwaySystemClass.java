@@ -4,7 +4,6 @@
  */
 package homeaway;
 
-import dataStructures.DoublyLinkedList;
 import dataStructures.Iterator;
 import dataStructures.TwoWayIterator;
 import homeaway.Exeptions.*;
@@ -12,14 +11,13 @@ import java.io.*;
 
 public class HomeAwaySystemClass implements HomeAwaySystem{
 
+    @Serial
     private static final long serialVersionUID = 0L;
 
     private AreaClass loadedArea;
-    private DoublyLinkedList<AreaClass> savedAreas;
 
-    public HomeAwaySystemClass(){
-        savedAreas = new DoublyLinkedList<>();
-    }
+
+    public HomeAwaySystemClass(){}
 
     @Override
     public void addTemporaryArea(String name, long topLatitude, long bottomLatitude, long leftLongitude, long rightLongitude)
@@ -41,7 +39,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
             throw new SystemBoundsNotDefinedException();
         String tempAreaName = loadedArea.getName();
         store(tempAreaName, loadedArea);
-        savedAreas.addFirst(loadedArea);
+
         return tempAreaName;
     }
 
