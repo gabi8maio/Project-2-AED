@@ -25,6 +25,7 @@ public class AreaClass implements Serializable, Area {
     private final SortedMap<Integer,TwoWayList<Services>> servicesByRank;
     private final Map<String, Students> allStudents;
     private final Map<String,SortedList<Students>> studentsByCountry;
+    private final Map <String, List <Services>> tags;
 
 
     int updateCounter;
@@ -41,6 +42,7 @@ public class AreaClass implements Serializable, Area {
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
         servicesByRank = new AVLSortedMap<>();
+        tags = new SepChainHashTable<>();
         updateCounter = 0;
         counterOfServicesInsertion =0;
     }

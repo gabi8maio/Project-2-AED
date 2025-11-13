@@ -23,7 +23,7 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
     int numOfServiceInsertion; // The number when was inserted;
 
     public TwoWayList<Students> studentsThere;
-    private final TwoWayList<String> tags;
+
 
     private static final long serialVersionUID = 0L;
 
@@ -32,7 +32,6 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
         this.longitude = longitude;
         this.latitude = latitude;
         this.value = value;
-        tags = new DoublyLinkedList<>();
         studentsThere = new DoublyLinkedList<>();
         studentsThereLodging = 0;
         averageStars = 4;
@@ -102,10 +101,6 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
         return lastUpdateCounter;
     }
 
-    @Override
-    public Iterator<String> getTags(){
-        return tags.iterator();
-    }
 
     @Override
     public TwoWayIterator<Students> getStudentsThere(){
@@ -127,7 +122,6 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
         rating++;
         averageStars = (totalStars + rating / 2) / rating;
         int newAverage = averageStars;
-        tags.addLast(tag);
         if(oldAverage != newAverage) lastUpdateCounter = counter;
     }
     @Override
