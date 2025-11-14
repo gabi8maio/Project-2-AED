@@ -22,7 +22,7 @@ public class AreaClass implements Serializable, Area {
 
 
     private final Map<String, Services> services;
-    private final List<List <Services>> servicesByRank;
+    private final List<TwoWayList <Services>> servicesByRank;
     private final SortedMap<String, Students> allStudents;
     private final Map<String,TwoWayList<Students>> studentsByCountry;
     private final Map <String, TwoWayList<Services>> tags;
