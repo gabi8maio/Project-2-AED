@@ -207,17 +207,13 @@ public class AreaClass implements Serializable, Area {
     @Override
     public Iterator<Students> getStudentsByCountryIterator(String country){
         ListInArray<Students> tempList = new ListInArray<>(studentsByCountry.size());
-        Iterator<Students> iterator = studentsByCountry.iterator();
 
-        while (iterator.hasNext()) {
-            Students student = iterator.next();
-            if (student.getCountry().equalsIgnoreCase(country)) tempList.addLast(student);
-        }
-        return tempList.iterator();
+        TwoWayList<Students> list = studentsByCountry.get(country);
+        return list.iterator();
     }
     @Override
     public Iterator<Services> getServicesByTagIterator(String tag){
-        Iterator<Services> it = services.iterator();
+       /* Iterator<Services> it = services.iterator();
         DoublyLinkedList<Services> iteratorWithServices = new DoublyLinkedList<>();
         while (it.hasNext()) {
             Services s = it.next();
@@ -228,10 +224,9 @@ public class AreaClass implements Serializable, Area {
                     iteratorWithServices.addLast(s);
                     break;
                 }
-            }
-        }
-
-        return iteratorWithServices.iterator();
+            }*/
+            TwoWayList<Services> list = tags.get(tag);
+            return list.iterator();
     }
     @Override
     public Iterator<Services> getRankedServicesIterator (int stars,String type,String studentName){
@@ -240,9 +235,10 @@ public class AreaClass implements Serializable, Area {
         Services studentLocation = student.getPlaceNow();
         long minDistance = Long.MAX_VALUE;
         ListInArray <Services> tempList = new ListInArray<>(20);
-        Iterator<Services> iterator = servicesByRank.iterator();
+        Iterator<TwoWayList<Services>> iterator = servicesByRank.iterator();
+        int i = 0;
         while (iterator.hasNext()) {
-            Services service = iterator.next();
+            Services service = iterator.next().get(i);
             if (service.getServiceType().equalsIgnoreCase(type) && service.getAverageStars() == stars)
                 if ( calculateManhattanDistance(studentLocation, service) < minDistance) {
                     minDistance = calculateManhattanDistance(studentLocation, service); //atualiza a nova distância minima
@@ -251,6 +247,7 @@ public class AreaClass implements Serializable, Area {
                 } else if (calculateManhattanDistance(studentLocation, service) == minDistance) {
                     tempList.addLast(service); //se a distância for = adiciona no final da lista temporária
                 }
+            i++;
         }
         return tempList.iterator();
     }

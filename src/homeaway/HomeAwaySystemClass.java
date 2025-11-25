@@ -266,7 +266,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
         if (argument.equals("all")) {
             Iterator<Map.Entry<String,Students>> it = getAllStudentsIterator();
             if (!it.hasNext()) throw new NoStudentsException();
-            else return  it;
+            else return it;
         } else {
             Iterator<Students> countryStudentIterator = getStudentsByCountryIterator(argument);
             if (!countryStudentIterator.hasNext()) {
