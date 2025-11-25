@@ -5,7 +5,9 @@
 package homeaway;
 
 import dataStructures.Iterator;
+import dataStructures.Map;
 import dataStructures.TwoWayIterator;
+import dataStructures.TwoWayList;
 import homeaway.Exeptions.*;
 import java.io.*;
 
@@ -71,8 +73,8 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     }
 
     @Override
-    public Iterator<Services> getServiceIterator() throws NoServicesYetException {
-        Iterator<Services> servicesIterator = loadedArea.getServicesIterator();
+    public Iterator<Map.Entry<String,Services>> getServiceIterator() throws NoServicesYetException {
+        Iterator<Map.Entry<String,Services>> servicesIterator = loadedArea.getServicesIterator();
         if(!servicesIterator.hasNext()) throw new NoServicesYetException();
         return loadedArea.getServicesIterator();
     }
@@ -106,8 +108,8 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     }
 
     @Override
-    public Iterator<Services> getServicesByRankingIterator() throws NoServicesInSystemException{
-        Iterator<Services> rankingIterator = loadedArea.getServicesByRankingIterator();
+    public Iterator<TwoWayList<Services>> getServicesByRankingIterator() throws NoServicesInSystemException{
+        Iterator<TwoWayList<Services>> rankingIterator = loadedArea.getServicesByRankingIterator();
         if (!rankingIterator.hasNext()) {
             throw new NoServicesInSystemException();
         }
@@ -255,16 +257,16 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
         return loadedArea.getStudentsByCountryIterator(country);
     }
 
-    public Iterator<Students> getAllStudentsIterator(){
+    public Iterator<Map.Entry<String,Students>> getAllStudentsIterator(){
         return loadedArea.getAllStudentsIterator();
     }
 
     @Override
     public Iterator<Students> getStudentsIterator(String argument) throws NoStudentsException, NoStudentsFromCountryException {
         if (argument.equals("all")) {
-            Iterator <Students> it = getAllStudentsIterator();
+            Iterator<Map.Entry<String,Students>> it = getAllStudentsIterator();
             if (!it.hasNext()) throw new NoStudentsException();
-            else return it;
+            else return  it;
         } else {
             Iterator<Students> countryStudentIterator = getStudentsByCountryIterator(argument);
             if (!countryStudentIterator.hasNext()) {

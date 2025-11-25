@@ -262,7 +262,7 @@ public class AreaClass implements Serializable, Area {
 
     }
     @Override
-    public Iterator<Services> getServicesByRankingIterator(){
+    public Iterator<TwoWayList<Services>> getServicesByRankingIterator(){
         return servicesByRank.iterator();
     }
     @Override
@@ -275,22 +275,13 @@ public class AreaClass implements Serializable, Area {
 
     @Override
     public String serviceExists(String serviceName) {
-
-        Iterator<Services> it = services.iterator();
-        while (it.hasNext()) {
-            Services s = it.next();
-            if((s.getServiceName().equalsIgnoreCase(serviceName))) return s.getServiceName();
-        }
-        return null;
+        return services.get(serviceName).getServiceName();
     }
     @Override
     public boolean lodgingExists(String serviceName) {
-        Iterator<Services> it = services.iterator();
-        while (it.hasNext()) {
-            Services s = it.next();
-            if (s.getServiceName().equalsIgnoreCase(serviceName) && s.getServiceType().equalsIgnoreCase(TypesOfService.LODGING.toString())) return true;
-        }
-        return false;
+
+        Services service = services.get(serviceName);
+        return service != null && service.getServiceType().equalsIgnoreCase(TypesOfService.LODGING.toString());
     }
     @Override
     public boolean isThereAnyStudents (String serviceName){
@@ -299,12 +290,9 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public boolean isStudentAtLocation(String studentName,String locationName){
-        Iterator<Students> it = allStudents.iterator();
-        while (it.hasNext()) {
-            Students s = it.next();
-            if((s.getName().equalsIgnoreCase(studentName))&&s.getPlaceNow().getServiceName().equalsIgnoreCase(locationName)) return true;
-        }
-        return false;
+        Students student = allStudents.get(studentName);
+        String locationOfStudent = student.getPlaceNow().getServiceName();
+        return locationOfStudent.equalsIgnoreCase(locationName);
     }
     @Override
     public boolean isStudentHome(String studentName, String locationName) {
@@ -316,32 +304,18 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public boolean isEatingServiceFull(String serviceName){
-        Iterator<Services> it = services.iterator();
-        while (it.hasNext()) {
-            Services s = it.next();
-            if((s.getServiceName().equalsIgnoreCase(serviceName)) && s.isFull() != null ) return true;
-        }
-        return false;
+
+        Services service = services.get(serviceName);
+        return service.getServiceType().equalsIgnoreCase(TypesOfService.EATING.toString())
+                && service.isFull() != null;
     }
 
     public String studentExists(String name) {
-        Iterator<Students> it = allStudents.iterator();
-        while (it.hasNext()) {
-            Students s = it.next();
-            if (s.getName().equalsIgnoreCase(name))
-                return s.getName();
-        }
-        return null;
+        return allStudents.get(name).getName();
     }
     @Override
     public String isItFull(String name) {
-        Iterator<Services> iterator = services.iterator();
-        while(iterator.hasNext()) {
-            Services service = iterator.next();
-            if(service.getServiceName().equals(name))
-                return service.isFull();
-        }
-        return null;
+        return services.get(name).isFull();
     }
     @Override
     public boolean isInBounds (long latitude, long longitude) {
@@ -395,10 +369,11 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public boolean hasServiceOfType(String type) {
-        Iterator <Services> it = services.iterator();
+
+        Iterator <Map.Entry<String,Services>> it = services.iterator();
         while (it.hasNext()) {
-            Services service = it.next();
-            if (service.getServiceType().equalsIgnoreCase(type)) {
+            Services services1 = it.next().value();
+            if (services1.getServiceType().equalsIgnoreCase(type)) {
                 return true;
             }
         }
@@ -406,10 +381,12 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public boolean isTypeWithAverage(String type, int n){
-        Iterator<Services> iterator = servicesByRank.iterator();
-        while (iterator.hasNext()) {
-            Services service = iterator.next();
+        Iterator<TwoWayList<Services>> iterator = servicesByRank.iterator();
+        int i = 0;
+        while (iterator.hasNext()) { // Modificado
+            Services service = iterator.next().get(i);
             if (service.getServiceType().equalsIgnoreCase(type) && service.getAverageStars() == n) return true;
+            i++;
         }
         return false;
     }

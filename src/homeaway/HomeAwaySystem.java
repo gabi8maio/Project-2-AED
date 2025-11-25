@@ -5,7 +5,9 @@
 package homeaway;
 
 import dataStructures.Iterator;
+import dataStructures.Map;
 import dataStructures.TwoWayIterator;
+import dataStructures.TwoWayList;
 import homeaway.Exeptions.*;
 
 import java.io.Serializable;
@@ -31,7 +33,7 @@ public interface HomeAwaySystem extends Serializable {
      * Asks the load area (current area) to the iterator of the services
      * @return -
      */
-    Iterator<Services> getServiceIterator();
+    Iterator<Map.Entry<String,Services>> getServiceIterator();
 
     /**
      * Checks if there is any area with the given name (if there is an area at the dat structure with the name given)
@@ -118,7 +120,7 @@ public interface HomeAwaySystem extends Serializable {
      * @return An iterator of the services ordered by ranking
      * @throws NoServicesInSystemException - If there are no services in the system
      */
-    Iterator<Services> getServicesByRankingIterator()
+    Iterator<TwoWayList<Services>> getServicesByRankingIterator()
             throws NoServicesInSystemException;
 
     /**
@@ -214,7 +216,7 @@ public interface HomeAwaySystem extends Serializable {
     /**
      * @return - returns an Iterator with every Student
      */
-    Iterator<Students> getAllStudentsIterator();
+    Iterator<Map.Entry<String,Students>> getAllStudentsIterator();
     /**
      * @param country - The name of the country
      * @return - returns a Iterator with Students of a certain country

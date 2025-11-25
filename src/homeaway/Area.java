@@ -63,12 +63,12 @@ public interface Area extends Serializable {
     /**
      * @return - An iterator of the all the services
      */
-    Iterator<Services> getServicesIterator();
+    Iterator<Map.Entry<String,Services>> getServicesIterator();
 
     /**
      * @return - An iterator of all the students
      */
-    Iterator<Students> getAllStudentsIterator();
+    Iterator<Map.Entry<String,Students>> getAllStudentsIterator();
 
     /**
      * Method used to iterate the student os a given country
@@ -108,7 +108,7 @@ public interface Area extends Serializable {
      * Method used to iterate the services ordered by the number of stars and the last updated service
      * @return
      */
-    Iterator<Services> getServicesByRankingIterator();
+    Iterator<TwoWayList<Services>> getServicesByRankingIterator();
 
     /**
      * @param studentName - The name of Student given

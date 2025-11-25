@@ -4,7 +4,9 @@
  */
 
 import dataStructures.Iterator;
+import dataStructures.Map;
 import dataStructures.TwoWayIterator;
+import dataStructures.TwoWayList;
 import homeaway.*;
 import homeaway.Exeptions.*;
 import java.util.Scanner;
@@ -184,9 +186,9 @@ public class Main {
      */
     private static void executeServices(HomeAwaySystem system) {
         try {
-            Iterator<Services> serviceIterator = system.getServiceIterator();
+            Iterator<Map.Entry<String, Services>> serviceIterator = system.getServiceIterator();
             while (serviceIterator.hasNext()) {
-                Services service = serviceIterator.next();
+                Services service = serviceIterator.next().value();
                 System.out.printf(SERVICES_COMMAND, service.getServiceName(),
                         service.getServiceType().toLowerCase(),
                         service.getLatitude(),
@@ -404,11 +406,14 @@ public class Main {
      */
     private static void executeRanking( HomeAwaySystem system) {
         try {
-            Iterator<Services> rankingIterator = system.getServicesByRankingIterator();
+            Iterator<TwoWayList<Services>> rankingIterator = system.getServicesByRankingIterator();
             System.out.println(SERVICES_SORTED_HEADER);
             while (rankingIterator.hasNext()) {
-                Services service = rankingIterator.next();
+                TwoWayList<Services> listOfservice = rankingIterator.next();
+                for(int i = 0; i< listOfservice.size(); i++){
+                    Services service = listOfservice.get(i);
                     System.out.printf(RANKING_COMMAND, service.getServiceName(), service.getAverageStars());
+                }
             }
         } catch (NoServicesInSystemException e) {
             System.out.println(e.getMessage());
