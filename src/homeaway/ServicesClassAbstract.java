@@ -24,7 +24,6 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
 
     public TwoWayList<Students> studentsThere;
 
-
     private static final long serialVersionUID = 0L;
 
     public ServicesClassAbstract(long latitude, long longitude, int value, String serviceName) {

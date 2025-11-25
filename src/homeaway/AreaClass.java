@@ -7,7 +7,6 @@ import dataStructures.*;
 import dataStructures.exceptions.InvalidPositionException;
 
 import java.io.Serializable;
-import java.util.Hashtable;
 
 
 public class AreaClass implements Serializable, Area {
@@ -41,7 +40,7 @@ public class AreaClass implements Serializable, Area {
         services = new SepChainHashTable<>();
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
-        servicesByRank = new ListInArray<>(5);
+        servicesByRank = new AVLSortedMap<>();
         tags = new SepChainHashTable<>();
         updateCounter = 0;
         counterOfServicesInsertion =0;
@@ -68,8 +67,11 @@ public class AreaClass implements Serializable, Area {
         assert newService != null;
         newService.updateCounterRating(updateCounter++);
         newService.setNumOfInsertion(counterOfServicesInsertion++);
-        services.addLast(newService);
-        servicesByRank.add(newService);
+
+        services.put(serviceName,newService); // Modificado
+       // servicesByRank.get()
+        // servicesByRank.add(serviceName,newService); // Modificado
+
     }
 
     @Override
@@ -86,20 +88,41 @@ public class AreaClass implements Serializable, Area {
         assert service != null;
         service.addStudentsThere(newStudent);
         service.addStudentsThereLodging();
-        allStudents.add(newStudent);
-        studentsByCountry.addLast(newStudent);
+
+
+        allStudents.put(name,newStudent);                                   // Modificado
+        TwoWayList<Students> studentsFromCountry = studentsByCountry.get(country);// Modificado
+        studentsFromCountry.addLast(newStudent);                                 // Modificado
+        studentsByCountry.put(country,studentsFromCountry);                     // Modificado
     }
 
     @Override
     public Students removeStudent(String studentName) {
         Students student = findStudentElem(studentName);
+        String country = student.getCountry();
         if(student == null)
             throw new InvalidPositionException(); // Isto em principio n vai acontecer
         Services servicesNow = student.getPlaceNow();
         Services homeService = student.getPlaceHome();
-        allStudents.remove(student);
-        int index = studentsByCountry.indexOf(student);
-        studentsByCountry.remove(index);
+
+        //-------------------------------------------
+        allStudents.remove(studentName); // Modificado
+        TwoWayList<Students> studentsList = studentsByCountry.get(country);
+
+        Iterator<Students> it = studentsList.iterator();
+
+        int i = 0;
+        while(it.hasNext()){                    // Modificado
+            Students studentFromCountry = it.next();
+            if(studentFromCountry.equals(student)){
+                studentsList.remove(i);
+                break;
+            }
+            i++;
+        }
+        studentsByCountry.put(country,studentsList); //Modificado
+
+        //_____________________________________
         servicesNow.removeStudentsThere(student);
         homeService.removeStudentsThere(student);
         homeService.removeStudentsThereLodging();
@@ -153,17 +176,32 @@ public class AreaClass implements Serializable, Area {
         Services service = findServicesElem(serviceName);
         assert service != null;
 
-        servicesByRank.remove(service);
-        service.addRating(rating, tag, updateCounter++);
+        Iterator<TwoWayList<Services>> it = servicesByRank.iterator();
 
-        servicesByRank.add(service);
+
+        //Modificado -------------
+        int j =0 ;
+        while(it.hasNext()){
+            TwoWayList<Services> list = it.next();
+            for(int i = 0; i < list.size(); i++){
+                if(list.get(i).equals(service)){
+                    servicesByRank.remove(j); // Removemos a lista de uma certa contagem
+                    list.remove(i); // removemos o serviço da lista
+                    service.addRating(rating, tag, updateCounter++); // adicionamos a nova rating ao serviço
+                    list.addLast(service); // adicionamos à lista o serviço atualizado
+                    servicesByRank.add(j,list); // Voltamos a por a lista completa com todos os serviços de um certo rating
+                    break;
+                }
+            }
+            j++;
+        }
     }
     @Override
-    public Iterator<Services> getServicesIterator() {
+    public Iterator<Map.Entry<String,Services>> getServicesIterator() {
         return services.iterator();
     }
 
-    public Iterator<Students> getAllStudentsIterator(){
+    public Iterator<Map.Entry<String,Students>> getAllStudentsIterator(){
         return allStudents.iterator();
     }
     @Override
@@ -381,12 +419,7 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Students getStudentLocationInfo(String studentName){
-        Iterator<Students> it = allStudents.iterator();
-        while (it.hasNext()) {
-            Students s = it.next();
-            if((s.getName().equalsIgnoreCase(studentName))) return s;
-        }
-        return null;
+       return allStudents.get(studentName); // Ignore case needs to be implemented
     }
 
     @Override
@@ -408,12 +441,7 @@ public class AreaClass implements Serializable, Area {
      * @return - returns the Student Object by the given name of the Student
      */
     private Students findStudentElem(String name){
-        Iterator<Students> it = allStudents.iterator();
-        while (it.hasNext()) {
-            Students s = it.next();
-            if (s.getName().equalsIgnoreCase(name)) return s;
-        }
-        return null;
+        return allStudents.get(name);
     }
     /**
      * Complexity: Best case: O(1) Worst case: O(n)
@@ -421,12 +449,7 @@ public class AreaClass implements Serializable, Area {
      * @return - returns the Service Object by the given name of the Service
      */
     private Services findServicesElem(String name){
-        Iterator<Services> it = services.iterator();
-        while (it.hasNext()) {
-            Services s = it.next();
-            if (s.getServiceName().equalsIgnoreCase(name)) return s;
-        }
-        return null;
+       return services.get(name);
     }
 
     /**
@@ -436,9 +459,12 @@ public class AreaClass implements Serializable, Area {
      */
     private Services findCheapestService(String serviceType) {
         Services cheapest = null;
-        Iterator<Services> it = getServicesIterator();
+        Iterator<Map.Entry<String,Services>> it = services.iterator(); // Nodificdo
+
         while (it.hasNext()) {
-            Services service = it.next();
+            Map.Entry<String,Services> serviceEntry = it.next();
+            Services service = serviceEntry.value();
+
                 if (service.getServiceType().equalsIgnoreCase(serviceType)) {
                     if (cheapest == null || getPrice(service) < getPrice(cheapest)) {
                         cheapest = service;
@@ -456,9 +482,10 @@ public class AreaClass implements Serializable, Area {
      */
     private Services findBestRatedService(String serviceType) {
         Services bestRated = null;
-        Iterator<Services> it = getServicesIterator();
+        Iterator<Map.Entry<String,Services>> it = services.iterator(); // Nodificdo
         while (it.hasNext()) {
-            Services service = it.next();
+            Map.Entry<String,Services> serviceEntry = it.next();
+            Services service = serviceEntry.value();
             if (service.getServiceType().equalsIgnoreCase(serviceType)) {
                 if (bestRated == null || service.getAverageStars() > bestRated.getAverageStars()) {
                     bestRated = service;
