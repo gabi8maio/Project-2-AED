@@ -25,6 +25,7 @@ public class AreaClass implements Serializable, Area {
     private final SortedMap<String, Students> allStudents;
     private final Map<String,TwoWayList<Students>> studentsByCountry;
     private final Map <String, TwoWayList<Services>> tags;
+    private final int MAX_NUM_STARS = 5;
 
 
     int updateCounter;
@@ -40,7 +41,7 @@ public class AreaClass implements Serializable, Area {
         services = new SepChainHashTable<>();
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
-        servicesByRank = new AVLSortedMap<>();
+        servicesByRank = new ListInArray<>(MAX_NUM_STARS);
         tags = new SepChainHashTable<>();
         updateCounter = 0;
         counterOfServicesInsertion =0;
@@ -206,7 +207,6 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Iterator<Students> getStudentsByCountryIterator(String country){
-        ListInArray<Students> tempList = new ListInArray<>(studentsByCountry.size());
 
         TwoWayList<Students> list = studentsByCountry.get(country);
         return list.iterator();

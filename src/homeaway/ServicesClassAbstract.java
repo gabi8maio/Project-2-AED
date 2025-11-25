@@ -43,6 +43,11 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
         return value;
     }
     @Override
+    public Iterator<String> getTags() {
+        return null;
+    }
+
+    @Override
     public void addStudentsThere(Students newStudent){
         studentsThere.addLast(newStudent);
     }

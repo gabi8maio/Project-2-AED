@@ -4,10 +4,7 @@
  */
 package homeaway;
 
-import dataStructures.Iterator;
-import dataStructures.Map;
-import dataStructures.TwoWayIterator;
-import dataStructures.TwoWayList;
+import dataStructures.*;
 import homeaway.Exeptions.*;
 import java.io.*;
 
@@ -264,15 +261,23 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     @Override
     public Iterator<Students> getStudentsIterator(String argument) throws NoStudentsException, NoStudentsFromCountryException {
         if (argument.equals("all")) {
-            Iterator<Map.Entry<String,Students>> it = getAllStudentsIterator();
-            if (!it.hasNext()) throw new NoStudentsException();
-            else return it;
+            Iterator<Map.Entry<String, Students>> it = getAllStudentsIterator();
+            ListInArray<Students> list = new ListInArray<>(1000);
+
+            while (it.hasNext()) {
+                Map.Entry<String, Students> entry = it.next();
+                list.addLast(entry.value());
+            }
+
+            if (list.isEmpty()) throw new NoStudentsException();
+            else return list.iterator();
         } else {
             Iterator<Students> countryStudentIterator = getStudentsByCountryIterator(argument);
             if (!countryStudentIterator.hasNext()) {
                 throw new NoStudentsFromCountryException();
-            }else
+            } else {
                 return countryStudentIterator;
+            }
         }
     }
 
