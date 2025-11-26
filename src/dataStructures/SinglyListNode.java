@@ -1,5 +1,4 @@
 package dataStructures;
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -10,13 +9,10 @@ import java.io.Serializable;
  *
  */
 class SinglyListNode<E> implements Serializable {
-
-
     /**
      * Serial Version UID of the Class
      */
-    @Serial
-    private static final long serialVersionUID = 0L;
+    static final long serialVersionUID = 0L;
 
     /**
      * Element stored in the node.
