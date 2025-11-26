@@ -7,19 +7,19 @@ import dataStructures.exceptions.NoSuchElementException;
  * @author AED  Team
  * @version 1.0
  * @param <E> Generic Element
- * 
+ *
  */
 class TwoWayDoublyIterator<E> extends DoublyIterator<E>
         implements TwoWayIterator<E> {
 
     /**
-     * Node with the last element in the iteration.
+     * Node with the first element in the iteration.
      */
     private DoublyListNode<E> lastNode;
     /**
      * Node with the previous element in the iteration.
      */
-    DoublyListNode<E> prevToReturn;
+    private DoublyListNode<E> prevToReturn;
 
     /**
      * DoublyLLIterator constructor
@@ -30,6 +30,8 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
     public TwoWayDoublyIterator(DoublyListNode<E> first, DoublyListNode<E> last) {
         super(first);
         //TODO: Left as an exercise.
+        this.lastNode = last;
+        this.prevToReturn = null;
     }
 
     /**
@@ -38,8 +40,8 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      * @return true iff the iteration has more elements in the reverse direction
      */
     public boolean hasPrevious( ) {
-        //TODO: Left as an exercise.
-        return true;
+        //TODO
+        return prevToReturn != null;
     }
 
     /**
@@ -48,8 +50,15 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
     public E next( ){
-        //TODO: Left as an exercise.
-        return null;
+        //TODO
+        if (!hasNext())
+            throw new NoSuchElementException();
+        else {
+            E element = nextToReturn.getElement();
+            prevToReturn = nextToReturn;
+            nextToReturn = nextToReturn.getNext();
+            return element;
+        }
     }
 
     /**
@@ -58,8 +67,15 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
     public E previous( ) {
-        //TODO: Left as an exercise.
-        return null;
+        //TODO
+        if (!hasPrevious())
+            throw new NoSuchElementException();
+        else {
+            E element = prevToReturn.getElement();
+            nextToReturn = prevToReturn;
+            prevToReturn = prevToReturn.getPrevious();
+            return element;
+        }
     }
 
     /**
@@ -67,14 +83,20 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      * After fullForward, if iteration is not empty,
      * previous will return the last element
      */
+
     public void fullForward() {
-        //TODO: Left as an exercise.
+        //TODO
+        this.prevToReturn=this.lastNode;
+        this.nextToReturn=null;
     }
 
     /**
-     * Restart the iterator
+     * Restarts the iteration.
+     * After rewind, if the iteration is not empty, next will return the first element.
      */
     public void rewind() {
-        //TODO: Left as an exercise.
+        //TODO
+        super.rewind();
+        this.prevToReturn = null;
     }
 }
