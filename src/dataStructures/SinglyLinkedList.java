@@ -60,8 +60,10 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public E getFirst() {
-        //TODO: Left as an exercise.
-        return null;
+        if (!this.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return head.getElement();
     }
 
     /**
@@ -72,8 +74,10 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public E getLast() {
-        //TODO: Left as an exercise.
-        return null;
+        if (!this.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return tail.getElement();
     }
 
     /**
@@ -88,9 +92,22 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public E get(int position) {
-        //TODO: Left as an exercise.
-        return null;
+        if (position < 0 || position >= currentSize)
+            throw new InvalidPositionException();
+        if (position == 0)
+            return getFirst();
+        if (position == currentSize-1)
+            return getLast();
+        return getNode(position).getElement();
+    }
+
+    private SinglyListNode<E> getNode(int position) {
+        SinglyListNode<E> node = head;
+        for (int i = 0; i < position; i++) {
+            node = node.getNext();
         }
+        return node;
+    }
 
 
     /**
@@ -103,10 +120,17 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public int indexOf(E element) {
+        SinglyListNode <E> node = head;
+        int position = 0;
+        while (node != null && !node.getElement().equals(element)) {
+            node = node.getNext();
+            position++;
+        }
+        if (node == null) {
+            return NOT_FOUND;
+        }
        
-        //TODO: Left as an exercise.
-       
-        return 0;
+        return position;
     }
 
     /**
@@ -116,8 +140,13 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public void addFirst(E element) {
-        //TODO: Left as an exercise.
-        
+        SinglyListNode<E> newNode = new SinglyListNode<>(element);
+
+        if (this.isEmpty())
+            tail = newNode;
+
+        head = newNode;
+        currentSize++;
     }
 
     /**
@@ -127,8 +156,15 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public void addLast(E element) {
-        //TODO: Left as an exercise.
-        
+        if (this.isEmpty())
+            addFirst(element);
+
+        SinglyListNode<E> newNode = new SinglyListNode<>(element);
+
+        tail.setNext(newNode);
+
+        tail = newNode;
+        currentSize++;
     }
 
     /**
@@ -145,8 +181,20 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     public void add(int position, E element) {
         if ( position < 0 || position > currentSize )
             throw new InvalidPositionException();
-        //TODO: Left as an exercise.
-        
+        if (position == 0)
+            this.addFirst(element);
+        else if (position == currentSize)
+            this.addLast(element);
+        else
+            this.addMiddle (position, element);
+    }
+
+    private void addMiddle(int position, E element) {
+        SinglyListNode<E> prevNode = this.getNode(position-1);
+        SinglyListNode<E> nextNode = prevNode.getNext();
+        SinglyListNode<E> newNode = new SinglyListNode<>(element);
+        prevNode.setNext(newNode);
+        currentSize++;
     }
 
 
@@ -160,8 +208,15 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     public E removeFirst() {
         if ( this.isEmpty() )
             throw new NoSuchElementException();
-        //TODO: Left as an exercise.
-        return null;
+
+        E element = head.getElement();
+        head = head.getNext();
+
+        if (head == null)
+            tail = null;
+
+        currentSize--;
+        return element;
     }
 
     /**
@@ -174,8 +229,13 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     public E removeLast() {
         if ( this.isEmpty() )
             throw new NoSuchElementException();
-        //TODO: Left as an exercise.
-        return null;
+        if (size() == 1)
+            return removeFirst();
+        E element = tail.getElement();
+        tail = getNode(size() -2);
+        tail.setNext(null);
+        currentSize--;
+        return element;
     }
 
     /**
@@ -192,8 +252,18 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     public E remove(int position) {
         if ( position < 0 || position >= currentSize )
             throw new InvalidPositionException();
-       //TODO: Left as an exercise.
-        return null;
+       if (position == 0)
+           return this.removeFirst();
+       if (position == currentSize-1)
+           return this.removeLast();
+        return this.removeMiddle(position);
     }
 
+    private E removeMiddle(int position) {
+        SinglyListNode<E> prevNode = this.getNode(position-1);
+        SinglyListNode<E> node = prevNode.getNext();
+        prevNode.setNext(node.getNext());
+        currentSize--;
+        return node.getElement();
+    }
 }
