@@ -69,7 +69,8 @@ public class AreaClass implements Serializable, Area {
         newService.updateCounterRating(updateCounter++);
         newService.setNumOfInsertion(counterOfServicesInsertion++);
 
-        services.put(serviceName,newService); // Modificado
+
+        services.put(serviceName.toUpperCase() ,newService); // Modificado
        // servicesByRank.get()
         // servicesByRank.add(serviceName,newService); // Modificado
 
@@ -91,10 +92,10 @@ public class AreaClass implements Serializable, Area {
         service.addStudentsThereLodging();
 
 
-        allStudents.put(name,newStudent);                                   // Modificado
-        TwoWayList<Students> studentsFromCountry = studentsByCountry.get(country);// Modificado
+        allStudents.put(name.toUpperCase(),newStudent);                                   // Modificado
+        TwoWayList<Students> studentsFromCountry = studentsByCountry.get(country.toUpperCase());// Modificado
         studentsFromCountry.addLast(newStudent);                                 // Modificado
-        studentsByCountry.put(country,studentsFromCountry);                     // Modificado
+        studentsByCountry.put(country.toUpperCase(),studentsFromCountry);                     // Modificado
     }
 
     @Override
@@ -108,7 +109,7 @@ public class AreaClass implements Serializable, Area {
 
         //-------------------------------------------
         allStudents.remove(studentName); // Modificado
-        TwoWayList<Students> studentsList = studentsByCountry.get(country);
+        TwoWayList<Students> studentsList = studentsByCountry.get(country.toUpperCase());
 
         Iterator<Students> it = studentsList.iterator();
 
@@ -121,7 +122,7 @@ public class AreaClass implements Serializable, Area {
             }
             i++;
         }
-        studentsByCountry.put(country,studentsList); //Modificado
+        studentsByCountry.put(country.toUpperCase(),studentsList); //Modificado
 
         //_____________________________________
         servicesNow.removeStudentsThere(student);
@@ -208,7 +209,7 @@ public class AreaClass implements Serializable, Area {
     @Override
     public Iterator<Students> getStudentsByCountryIterator(String country){
 
-        TwoWayList<Students> list = studentsByCountry.get(country);
+        TwoWayList<Students> list = studentsByCountry.get(country.toUpperCase());
         return list.iterator();
     }
     @Override
@@ -225,7 +226,7 @@ public class AreaClass implements Serializable, Area {
                     break;
                 }
             }*/
-            TwoWayList<Services> list = tags.get(tag);
+            TwoWayList<Services> list = tags.get(tag.toUpperCase());
             return list.iterator();
     }
     @Override
@@ -272,12 +273,12 @@ public class AreaClass implements Serializable, Area {
 
     @Override
     public String serviceExists(String serviceName) {
-        return services.get(serviceName).getServiceName();
+        return services.get(serviceName.toUpperCase()).getServiceName();
     }
     @Override
     public boolean lodgingExists(String serviceName) {
 
-        Services service = services.get(serviceName);
+        Services service = services.get(serviceName.toUpperCase());
         return service != null && service.getServiceType().equalsIgnoreCase(TypesOfService.LODGING.toString());
     }
     @Override
@@ -287,7 +288,7 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public boolean isStudentAtLocation(String studentName,String locationName){
-        Students student = allStudents.get(studentName);
+        Students student = allStudents.get(studentName.toUpperCase());
         String locationOfStudent = student.getPlaceNow().getServiceName();
         return locationOfStudent.equalsIgnoreCase(locationName);
     }
@@ -302,17 +303,17 @@ public class AreaClass implements Serializable, Area {
     @Override
     public boolean isEatingServiceFull(String serviceName){
 
-        Services service = services.get(serviceName);
+        Services service = services.get(serviceName.toUpperCase());
         return service.getServiceType().equalsIgnoreCase(TypesOfService.EATING.toString())
                 && service.isFull() != null;
     }
 
     public String studentExists(String name) {
-        return allStudents.get(name).getName();
+        return allStudents.get(name.toUpperCase()).getName();
     }
     @Override
     public String isItFull(String name) {
-        return services.get(name).isFull();
+        return services.get(name.toUpperCase()).isFull();
     }
     @Override
     public boolean isInBounds (long latitude, long longitude) {
@@ -393,7 +394,7 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Students getStudentLocationInfo(String studentName){
-       return allStudents.get(studentName); // Ignore case needs to be implemented
+       return allStudents.get(studentName.toUpperCase()); // Ignore case needs to be implemented
     }
 
     @Override
@@ -415,7 +416,7 @@ public class AreaClass implements Serializable, Area {
      * @return - returns the Student Object by the given name of the Student
      */
     private Students findStudentElem(String name){
-        return allStudents.get(name);
+        return allStudents.get(name.toUpperCase());
     }
     /**
      * Complexity: Best case: O(1) Worst case: O(n)
@@ -423,7 +424,7 @@ public class AreaClass implements Serializable, Area {
      * @return - returns the Service Object by the given name of the Service
      */
     private Services findServicesElem(String name){
-       return services.get(name);
+       return services.get(name.toUpperCase());
     }
 
     /**
