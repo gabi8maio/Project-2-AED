@@ -9,33 +9,41 @@ import dataStructures.exceptions.NoSuchElementException;
  */
 class KeysIterator<E> implements Iterator<E> {
 
-    
-     //TODO: Left as an exercise.
-     private final Iterator<Map.Entry<E, ?>> entryIterator;
+
+    private final Iterator <Map.Entry<E, ?>> iterator;
+
 
     public KeysIterator(Iterator<Map.Entry<E,?>> it) {
-       //TODO: Left as an exercise.
-        this.entryIterator = it;
+        iterator = it;
     }
 
-    @Override
+    /**
+     * Returns true if next would return an element
+     * rather than throwing an exception.
+     *
+     * @return true iff the iteration has more elements
+     */
     public boolean hasNext() {
-	//TODO: Left as an exercise.
-        return entryIterator.hasNext();
+        return iterator.hasNext();
     }
 
-    @Override
+    /**
+     * Returns the next element in the iteration.
+     *
+     * @return the next element in the iteration
+     * @throws NoSuchElementException - if call is made without verifying pre-condition
+     */
     public E next() {
-	//TODO: Left as an exercise.
-        if (!hasNext()) throw new NoSuchElementException();
-
-        Map.Entry<E, ?> entry = entryIterator.next();
+        if (!hasNext()) {throw new NoSuchElementException();}
+        Map.Entry<E, ?> entry = iterator.next();
         return entry.key();
     }
 
-    @Override
+    /**
+     * Restarts the iteration.
+     * After rewind, if the iteration is not empty, next will return the first element.
+     */
     public void rewind() {
-        //TODO: Left as an exercise.
-        entryIterator.rewind();
+        iterator.rewind();
     }
 }

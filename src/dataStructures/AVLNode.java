@@ -13,11 +13,12 @@ class AVLNode<E> extends BTNode<E> {
         super(elem);
         height=0;
     }
-    
+
     public AVLNode( E element, AVLNode<E> parent,
                     AVLNode<E> left, AVLNode<E> right ){
-        super(element,parent,left,right);
-        //TODO: Left as an exercise.
+        super(element, parent, left, right);
+        updateHeight();
+
     }
     public AVLNode( E element, AVLNode<E> parent){
         super(element, parent,null, null);
@@ -37,7 +38,8 @@ class AVLNode<E> extends BTNode<E> {
      * @param node
      */
     public void setLeftChild(AVLNode<E> node) {
-        //TODO: Left as an exercise.
+        super.setLeftChild(node);
+        updateHeight();
     }
 
     /**
@@ -45,10 +47,26 @@ class AVLNode<E> extends BTNode<E> {
      * @param node
      */
     public void setRightChild(AVLNode<E> node) {
-        //TODO: Left as an exercise.
+        super.setRightChild(node);
+        updateHeight();
     }
 // others public methods
 //TODO: Left as an exercise.
 
+    void updateHeight() {
+        // Calcula a altura baseada nos filhos:
+        // Altura = 1 + máxima altura entre os filhos
+        int leftHeight = height((AVLNode<E>) getLeftChild());
+        int rightHeight = height((AVLNode<E>) getRightChild());
+        height = 1 + Math.max(leftHeight, rightHeight);
+    }
+
+    public int getBalanceFactor() {
+        // FATOR DE BALANCEAMENTO = altura(esquerda) - altura(direita)
+        // Positivo: mais pesado à esquerda
+        // Negativo: mais pesado à direita
+        // Zero: balanceado
+        return height((AVLNode<E>) getLeftChild()) - height((AVLNode<E>) getRightChild());
+    }
 
 }

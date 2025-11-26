@@ -59,18 +59,19 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
         return null;
     }
 
-    private BTNode<Entry<K,V>> getNode(BTNode<Entry<K,V>> node, K key) {
-        //TODO: Left as an exercise.
+    protected BTNode<Entry<K,V>> getNode(BTNode<Entry<K,V>> node, K key) {
+        if (node == null)
+            return null;
 
-        if (node == null) return null;
+        K current = node.getElement().key();
+        int compare = key.compareTo(current); // ← CORRIGIDO: key.compareTo(current)
 
-        int comparison = key.compareTo(node.getElement().key());
-        if (comparison == 0)
+        if (compare == 0)
             return node;
-        else if (comparison < 0)
-            return getNode((BTNode<Entry<K,V>>) node.getLeftChild(), key);
-        else
-            return getNode((BTNode<Entry<K,V>>) node.getRightChild(), key);
+        else if (compare < 0) // key < current → vai para esquerda
+            return getNode((BTNode<Entry<K, V>>) node.getLeftChild(), key);
+        else // compare > 0 → key > current → vai para direita
+            return getNode((BTNode<Entry<K, V>>) node.getRightChild(), key);
     }
 
     /**
@@ -85,44 +86,40 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      */
     @Override
     public V put(K key, V value) {
-        //TODO: Left as an exercise.
-
-        Entry<K,V> newEntry = new Entry<>(key, value);
-
         if (isEmpty()) {
-            root = new BTNode<>(newEntry, null, null, null);
+            root = new BTNode<>(new Map.Entry<>(key, value));
+            currentSize++; // FALTAVA ESTA LINHA
             return null;
         }
-
-        BTNode<Entry<K,V>> current = (BTNode<Entry<K,V>>) root;
-        BTNode<Entry<K,V>> parent = null;
-
-        while (current != null) {
-            parent = current;
-            int comparison = key.compareTo(current.getElement().key());
-
-            if (comparison == 0) {
-                V oldValue = current.getElement().value();
-                current.setElement(newEntry);
-                return oldValue;
-            }
-
-            current = (comparison < 0) ?
-                    (BTNode<Entry<K,V>>) current.getLeftChild() :
-                    (BTNode<Entry<K,V>>) current.getRightChild();
-        }
-
-
-        BTNode<Entry<K,V>> newNode = new BTNode<>(newEntry, parent, null, null);
-        if (key.compareTo(parent.getElement().key()) < 0) {
-            parent.setLeftChild(newNode);
-        } else
-            parent.setRightChild(newNode);
-
-
-        return null;
+        return findInsert((BTNode<Entry<K, V>>) root, key, value);
     }
 
+    private V findInsert(BTNode<Entry<K,V>> node, K key, V value) {
+        int compare = key.compareTo(node.getElement().key());
+        if (compare == 0) {
+            V oldValue = node.getElement().value();
+            node.setElement(new Map.Entry<>(key, value));
+            return oldValue;
+        }
+        if (compare < 0) {
+            if (node.getLeftChild() == null) {
+                BTNode<Entry<K, V>> newNode = new BTNode<>(new Map.Entry<>(key, value), node);
+                node.setLeftChild(newNode);
+                currentSize++; // FALTAVA ESTA LINHA
+                return null;
+            }
+            else return findInsert((BTNode<Entry<K, V>>) node.getLeftChild(), key, value);
+        }
+        else { // compare > 0
+            if (node.getRightChild() == null) {
+                BTNode<Entry<K,V>> newNode = new BTNode<>(new Map.Entry<>(key, value), node);
+                node.setRightChild(newNode);
+                currentSize++; // FALTAVA ESTA LINHA
+                return null;
+            }
+            else return findInsert((BTNode<Entry<K, V>>) node.getRightChild(), key, value);
+        }
+    }
 
     /**
      * If there is an entry in the dictionary whose key is the specified key,
@@ -135,60 +132,46 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      */
     @Override
     public V remove(K key) {
-        //TODO: Left as an exercise.
-        BTNode<Entry<K,V>> current = (BTNode<Entry<K,V>>) root;
-        BTNode<Entry<K,V>> parent = null;
+        if (isEmpty())
+            return null;
 
-        while (current != null) {
-            int comparison = key.compareTo(current.getElement().key());
-
-            if (comparison == 0) {
-                V oldValue = current.getElement().value();
-
-                if (current.getLeftChild() != null && current.getRightChild() != null) {
-                    // Node with two children - find successor
-                    BTNode<Entry<K,V>> successor = (BTNode<Entry<K,V>>) current.getRightChild();
-                    BTNode<Entry<K,V>> successorParent = current;
-
-                    while (successor.getLeftChild() != null) {
-                        successorParent = successor;
-                        successor = (BTNode<Entry<K,V>>) successor.getLeftChild();
-                    }
-
-                    // Replace current with successor's data
-                    current.setElement(successor.getElement());
-
-                    // Remove the successor (which has at most one right child)
-                    if (successorParent.getLeftChild() == successor) {
-                        successorParent.setLeftChild(successor.getRightChild());
-                    } else
-                        successorParent.setRightChild(successor.getRightChild());
-
-
-                    if (successor.getRightChild() != null)
-                        ((BTNode<Entry<K,V>>) successor.getRightChild()).setParent(successorParent);
-
-                } else {
-                    BTNode<Entry<K,V>> child = (current.getLeftChild() != null) ? (BTNode<Entry<K,V>>) current.getLeftChild() : (BTNode<Entry<K,V>>) current.getRightChild();
-
-                    if (parent == null) root = child;
-                    else if (parent.getLeftChild() == current) parent.setLeftChild(child);
-                     else parent.setRightChild(child);
-
-
-                    if (child != null) child.setParent(parent);
-
-                }
-
-                return oldValue;
-            }
-
-            parent = current;
-            current = (comparison < 0) ?
-                    (BTNode<Entry<K,V>>) current.getLeftChild() :
-                    (BTNode<Entry<K,V>>) current.getRightChild();
+        BTNode<Entry<K, V>> node = getNode((BTNode<Entry<K, V>>) root, key);
+        if (node == null)
+            return null;
+        else {
+            V oldValue = node.getElement().value();
+            recursiveRemove(node);
+            currentSize--;
+            return oldValue;
         }
-        return null;
+    }
+
+    private void replaceChild(BTNode<Entry<K, V>> parent, BTNode<Entry<K, V>> child, BTNode<Entry<K, V>> newChild) {
+        if (parent == null) {
+            root = newChild;
+        } else if (parent.getLeftChild() == child) {
+            parent.setLeftChild(newChild);
+        } else {
+            parent.setRightChild(newChild);
+        }
+
+        if (newChild != null)
+            newChild.setParent(parent);
+    }
+
+    private void recursiveRemove(BTNode<Entry<K, V>> node) {
+        BTNode<Entry<K, V>> parent = (BTNode<Entry<K, V>>) node.getParent();
+        if (node.isLeaf())
+            replaceChild(parent, node, null);
+        else if (node.getLeftChild() == null)
+            replaceChild(parent, node, (BTNode<Entry<K, V>>) node.getRightChild());
+        else if (node.getRightChild() == null)
+            replaceChild(parent, node, (BTNode<Entry<K, V>>) node.getLeftChild());
+        else {//opçao A: substituir pelo mais a direita do left Child.
+            BTNode<Entry<K, V>> replace = ((BTNode<Entry<K, V>>) node.getLeftChild()).furtherRightElement();
+            node.setElement(replace.getElement());
+            recursiveRemove(replace);
+        }
     }
 
     /**
@@ -207,7 +190,7 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      * @return iterator of the values in the dictionary
      */
     @Override
-@SuppressWarnings({"unchecked","rawtypes"})
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<V> values() {
         return new ValuesIterator(iterator());
     }
@@ -218,7 +201,7 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      * @return iterator of the keys in the dictionary
      */
     @Override
-@SuppressWarnings({"unchecked","rawtypes"})
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<K> keys() {
         return new KeysIterator(iterator());
     }

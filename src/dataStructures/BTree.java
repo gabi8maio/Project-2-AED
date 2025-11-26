@@ -12,7 +12,7 @@ abstract class BTree<E> extends Tree<E> {
      */
     public int getHeight() {
         if(isEmpty())
-            return 0;
+            return -1;
         return ((BTNode<E>)root).getHeight();
     }
 
@@ -21,9 +21,6 @@ abstract class BTree<E> extends Tree<E> {
      * @return
      */
     BTNode<E> furtherLeftElement() {
-        //TODO: Left as an exercise.
-        if (isEmpty()) return null;
-
         return ((BTNode<E>) root).furtherLeftElement();
     }
 
@@ -32,12 +29,8 @@ abstract class BTree<E> extends Tree<E> {
      * @return
      */
     BTNode<E> furtherRightElement() {
-        //TODO: Left as an exercise.
-        if (isEmpty()) return null;
-
         return ((BTNode<E>) root).furtherRightElement();
-        
     }
 
-   //new methods: Left as an exercise.
+    //new methods: Left as an exercise.
 }
