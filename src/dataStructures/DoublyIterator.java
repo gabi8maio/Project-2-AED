@@ -6,13 +6,13 @@ import dataStructures.exceptions.NoSuchElementException;
  * @author AED  Team
  * @version 1.0
  * @param <E> Generic Element
- * 
+ *
  */
 class DoublyIterator<E> implements Iterator<E> {
     /**
      * Node with the first element in the iteration.
      */
-    private DoublyListNode<E> firstNode;
+    private final DoublyListNode<E> firstNode;
 
     /**
      * Node with the next element in the iteration.
@@ -26,8 +26,8 @@ class DoublyIterator<E> implements Iterator<E> {
      * @param first - Node with the first element of the iteration
      */
     public DoublyIterator(DoublyListNode<E> first) {
-        //TODO: Left as an exercise.
-
+        this.firstNode = first;
+        nextToReturn = first;
     }
     /**
      * Returns the next element in the iteration.
@@ -36,16 +36,18 @@ class DoublyIterator<E> implements Iterator<E> {
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
     public E next( ){
-        //TODO: Left as an exercise.
-        return null;
+        if (!this.hasNext())
+            throw new NoSuchElementException();
+        E element = nextToReturn.getElement();
+        nextToReturn = nextToReturn.getNext();
+        return element;
     }
 
     /**
      * Restart the iterator
      */
     public void rewind() {
-        //TODO: Left as an exercise.
-
+        nextToReturn = firstNode;
     }
     /**
      * Returns true if next would return an element
@@ -53,8 +55,7 @@ class DoublyIterator<E> implements Iterator<E> {
      * @return true iff the iteration has more elements
      */
     public boolean hasNext( ) {
-        //TODO: Left as an exercise.
-        return true;
+        return nextToReturn != null;
     }
 
 

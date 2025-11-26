@@ -8,7 +8,7 @@ import dataStructures.exceptions.*;
  * @author AED  Team
  * @version 1.0
  * @param <E> Generic Element
- * 
+ *
  */
 public class SortedDoublyLinkedList<E> implements SortedList<E> {
 
@@ -34,8 +34,10 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * currentSize is initialized as 0.
      */
     public SortedDoublyLinkedList(Comparator<E> comparator) {
-        //TODO: Left as an exercise.
         this.comparator = comparator;
+        head = null;
+        tail = null;
+        currentSize = 0;
     }
 
     /**
@@ -69,7 +71,10 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getMin( ) {
-        //TODO: Left as an exercise.
+        if (size() == 0)
+            throw new NoSuchElementException();
+        if (head != null)
+            return head.getElement();
         return null;
     }
 
@@ -79,7 +84,10 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getMax( ) {
-        //TODO: Left as an exercise.
+        if (size() == 0)
+            throw new NoSuchElementException();
+        if (tail != null)
+            return tail.getElement();
         return null;
     }
     /**
@@ -87,7 +95,12 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @return element in the list or null
      */
     public E get(E element) {
-        //TODO: Left as an exercise.
+        Iterator <E> iterator = iterator();
+        while (iterator.hasNext()) {
+            E current = iterator.next();
+            if (comparator.compare(current, element) == 0)
+                return current;
+        }
         return null;
     }
 
@@ -98,8 +111,7 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @return true iff the element exists in the list.
      */
     public boolean contains(E element) {
-        //TODO: Left as an exercise.
-        return true;
+        return get(element) != null;
     }
 
     /**
@@ -108,7 +120,44 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @param element to be inserted
      */
     public void add(E element) {
-        //TODO: Left as an exercise.
+        DoublyListNode<E> nodeToCompare = head;
+        DoublyListNode<E> newNode = new DoublyListNode<>(element);
+        if (this.isEmpty()) {
+            head = newNode;
+            tail = newNode;
+            currentSize++;
+
+
+        }else if (comparator.compare(element, head.getElement()) < 0 ) {
+            newNode.setNext(head);
+            head.setPrevious(newNode);
+            head = newNode;
+            currentSize++;
+        }else if (comparator.compare(element, head.getElement()) == 0 ) {
+            DoublyListNode<E> next = head.getNext();
+            head.setNext(newNode);
+            newNode.setNext(next);
+            next.setNext(newNode);
+            newNode.setPrevious(head);
+            currentSize++;
+        }else if (comparator.compare(element, tail.getElement()) >= 0) {
+            tail.setNext(newNode);
+            newNode.setPrevious(tail);
+            tail = newNode;
+            currentSize++;
+
+        } else {
+            while (comparator.compare(nodeToCompare.getElement(), element) <= 0 && nodeToCompare.getNext() != null) {
+                nodeToCompare = nodeToCompare.getNext();
+            }
+
+            DoublyListNode<E> prev = nodeToCompare.getPrevious();
+            prev.setNext(newNode);
+            newNode.setPrevious(prev);
+            newNode.setNext(nodeToCompare);
+            nodeToCompare.setPrevious(newNode);
+            currentSize++;
+        }
     }
 
     /**
@@ -116,7 +165,41 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @return element removed from the list or null if !belongs(element)
      */
     public E remove(E element) {
-        //TODO: Left as an exercise.
-        return null;
+        if (isEmpty()){
+            return null;
+        }
+        DoublyListNode<E> current = head;
+        DoublyListNode<E> nodeToRemove = null;
+        while (current != null &&  nodeToRemove == null) {
+            if (comparator.compare(current.getElement(), element) == 0) {
+                nodeToRemove = current;
+            }
+            current = current.getNext();
+        }
+
+        if (nodeToRemove == null) {
+            return null;
+        }
+
+        E removedElement = nodeToRemove.getElement();
+
+        if (currentSize==1){
+            head=null;
+            tail=null;
+        }else if (nodeToRemove == head){
+            head=head.getNext();
+            head.setPrevious(null);
+        }else if (nodeToRemove==tail){
+            tail=tail.getPrevious();
+            tail.setNext(null);
+        }else{
+            DoublyListNode<E> prev = nodeToRemove.getPrevious();
+            DoublyListNode<E> next = nodeToRemove.getNext();
+            prev.setNext(next);
+            next.setPrevious(prev);
+        }
+        currentSize--;
+        return removedElement;
     }
+
 }
