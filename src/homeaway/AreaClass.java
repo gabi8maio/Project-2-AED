@@ -21,6 +21,7 @@ public class AreaClass implements Serializable, Area {
 
 
     private final Map<String, Services> services;
+    private final TwoWayList<Services> servicesByInsertion;
     private final List<TwoWayList <Services>> servicesByRank;
     private final SortedMap<String, Students> allStudents;
     private final Map<String,TwoWayList<Students>> studentsByCountry;
@@ -38,6 +39,7 @@ public class AreaClass implements Serializable, Area {
         this.bottomLatitude = bottomLatitude;
         this.leftLongitude = leftLongitude;
         this.rightLongitude = rightLongitude;
+        servicesByInsertion = new DoublyLinkedList<>();
         services = new SepChainHashTable<>();
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
@@ -70,6 +72,7 @@ public class AreaClass implements Serializable, Area {
         newService.setNumOfInsertion(counterOfServicesInsertion++);
 
 
+        servicesByInsertion.addLast(newService);
         services.put(serviceName.toUpperCase() ,newService); // Modificado
        // servicesByRank.get()
         // servicesByRank.add(serviceName,newService); // Modificado
@@ -273,6 +276,8 @@ public class AreaClass implements Serializable, Area {
 
     @Override
     public String serviceExists(String serviceName) {
+        if(services.isEmpty()) return null;
+        if(services.get(serviceName.toUpperCase()) == null) return null;
         return services.get(serviceName.toUpperCase()).getServiceName();
     }
     @Override
