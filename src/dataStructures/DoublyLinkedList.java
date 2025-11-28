@@ -119,7 +119,7 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      */
     public void addLast( E element ) {
         //TODO: Left as an exercise.
-        DoublyListNode<E> newNode = new DoublyListNode<E>(element,tail,null);
+        DoublyListNode<E> newNode = new DoublyListNode<>(element,tail,null);
         if(isEmpty()) head = newNode;
         else tail.setNext(newNode);
         tail = newNode;
