@@ -134,10 +134,29 @@ public class AreaClass implements Serializable, Area {
         }
         studentsByCountry.put(country.toUpperCase(),studentsList); //Modificado
 
-        //_____________________________________
+
         servicesNow.removeStudentsThere(student);
         homeService.removeStudentsThere(student);
         homeService.removeStudentsThereLodging();
+
+        services.remove(servicesNow.getServiceName().toUpperCase()); // Services Updated
+        services.remove(homeService.getServiceName().toUpperCase()); // Services Updated
+
+        services.put(servicesNow.getServiceName().toUpperCase(),servicesNow); // Services Updated
+        services.put(homeService.getServiceName().toUpperCase(),homeService); // Services Updated
+
+        // No services Insertion tmb
+        for(int j = 0; j < servicesByInsertion.size(); j++){
+            if(servicesByInsertion.get(j).getServiceName().equalsIgnoreCase(servicesNow.getServiceName())){
+                servicesByInsertion.remove(j);
+                servicesByInsertion.add(j,servicesNow);
+            }
+            if(servicesByInsertion.get(j).getServiceName().equalsIgnoreCase(homeService.getServiceName())){
+                servicesByInsertion.remove(j);
+                servicesByInsertion.add(j,homeService);
+            }
+        }
+        //_____________________________________
         return student;
     }
 
@@ -160,6 +179,36 @@ public class AreaClass implements Serializable, Area {
 
         student.setPlaceHome(service);
         student.setPlaceGo(service);
+
+        //Modificado------------
+        services.remove(oldService.getServiceName().toUpperCase());
+        services.remove(service.getServiceName().toUpperCase()); // Services Updated
+        allStudents.remove(student.getName().toUpperCase()); // Services Updated
+
+        services.put(oldService.getServiceName().toUpperCase(), oldService);
+        allStudents.put(student.getName().toUpperCase(),student); // Services Updated
+        services.put(service.getServiceName().toUpperCase(),service); // Services Updated
+
+        // No services Insertion tmb
+        for(int j = 0; j < servicesByInsertion.size(); j++){
+            if(servicesByInsertion.get(j).getServiceName().equalsIgnoreCase(service.getServiceName())){
+                servicesByInsertion.remove(j);
+                servicesByInsertion.add(j,service);
+            }
+            if(servicesByInsertion.get(j).getServiceName().equalsIgnoreCase(oldService.getServiceName())){
+                servicesByInsertion.remove(j);
+                servicesByInsertion.add(j,oldService);
+            }
+        }
+
+        for(int j = 0; j < studentsByInsertion.size(); j++){
+            if(studentsByInsertion.get(j).getName().equalsIgnoreCase(student.getName())){
+                studentsByInsertion.remove(j);
+                studentsByInsertion.add(j,student);
+            }
+        }
+        //_____________________________________
+
         return student;
     }
 
@@ -179,6 +228,36 @@ public class AreaClass implements Serializable, Area {
         previousService.removeStudentsThere(student);    // Remove from previous Service
         newService.addStudentsThere(student);               // Add on new Service
         student.setPlaceGo(newService);
+
+        //Modificado------------
+        services.remove(previousService.getServiceName().toUpperCase());
+        services.remove(newService.getServiceName().toUpperCase()); // Services Updated
+        allStudents.remove(student.getName().toUpperCase()); // Services Updated
+
+        services.put(previousService.getServiceName().toUpperCase(), previousService);
+        allStudents.put(student.getName().toUpperCase(),student); // Services Updated
+        services.put(newService.getServiceName().toUpperCase(),newService); // Services Updated
+
+        // No services Insertion tmb
+        for(int j = 0; j < servicesByInsertion.size(); j++){
+            if(servicesByInsertion.get(j).getServiceName().equalsIgnoreCase(previousService.getServiceName())){
+                servicesByInsertion.remove(j);
+                servicesByInsertion.add(j,previousService);
+            }
+            if(servicesByInsertion.get(j).getServiceName().equalsIgnoreCase(newService.getServiceName())){
+                servicesByInsertion.remove(j);
+                servicesByInsertion.add(j,newService);
+            }
+        }
+
+        for(int j = 0; j < studentsByInsertion.size(); j++){
+            if(studentsByInsertion.get(j).getName().equalsIgnoreCase(student.getName())){
+                studentsByInsertion.remove(j);
+                studentsByInsertion.add(j,student);
+            }
+        }
+        //_____________________________________
+
         return student;
 
     }
@@ -440,6 +519,9 @@ public class AreaClass implements Serializable, Area {
      * @return - returns the Service Object by the given name of the Service
      */
     private Services findServicesElem(String name){
+        if(services.isEmpty()) return null;
+        if(services.get(name.toUpperCase()) == null) return null;
+
        return services.get(name.toUpperCase());
     }
 
