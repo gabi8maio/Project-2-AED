@@ -48,6 +48,11 @@ public class AreaClass implements Serializable, Area {
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
         servicesByRank = new ListInArray<>(MAX_NUM_STARS);
+        servicesByRank.add(0,null);
+        servicesByRank.add(1,null);
+        servicesByRank.add(2,null);
+        servicesByRank.add(3,null);
+        servicesByRank.add(4,null);
         tags = new SepChainHashTable<>();
         updateCounter = 0;
         counterOfServicesInsertion =0;
@@ -79,10 +84,23 @@ public class AreaClass implements Serializable, Area {
         servicesByInsertion.addLast(newService);
         services.put(serviceName.toUpperCase() ,newService); // Modificado
 
-        TwoWayList<Services> list = new DoublyLinkedList<>();
+        TwoWayList<Services> list;
+
+        list = servicesByRank.get(1);
+        if(list == null){
+            list = new DoublyLinkedList<>();
+            list.addLast(newService);
+        }else
+            list.addLast(newService);
+        if(!servicesByRank.isEmpty())
+            servicesByRank.remove(1);
+        servicesByRank.add(1,list); // 1 the second postion 5,4,3,2,1 stars
+
+
+      /* TwoWayList<Services> list = new DoublyLinkedList<>();
         list.addLast(newService);
         servicesByRank.add(1,list); // 1 the second postion 5,4,3,2,1 stars
-        // servicesByRank.add(serviceName,newService); // Modificado
+        // servicesByRank.add(serviceName,newService); // Modificado*/
 
     }
 

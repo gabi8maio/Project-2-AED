@@ -19,7 +19,7 @@ public class ListInArray<E> implements List<E> {
      * Number of elements in array.
      */
     private int counter;
-
+    private int dimension;
 
     /**
      * Construtor with capacity.
@@ -29,7 +29,9 @@ public class ListInArray<E> implements List<E> {
     public ListInArray(int dimension) {
         elems = (E[]) new Object[dimension];
         counter = 0;
+        this.dimension = dimension;
     }
+
     /**
      * Returns true iff the list contains no elements.
      *
@@ -93,7 +95,7 @@ public class ListInArray<E> implements List<E> {
      */
     public E get(int position) {
         //TODO: Left as an exercise.
-        if(position < 0 || position >= counter) throw new InvalidPositionException();
+        if(position < 0 || position >= elems.length) throw new InvalidPositionException();
 
         return elems[position];
     }
@@ -226,7 +228,7 @@ public class ListInArray<E> implements List<E> {
      */
     public E remove(int position) {
         //TODO: Left as an exercise.
-        if(position < 0 || position >= counter) throw new InvalidPositionException();
+        if(position < 0 || position >= dimension) throw new InvalidPositionException();
         E removed = elems[position];
         for(int i = position; i < counter - 1; i++) elems[i] = elems[i + 1];
         elems[--counter] = null;
