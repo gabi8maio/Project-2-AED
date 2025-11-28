@@ -410,6 +410,7 @@ public class Main {
             System.out.println(SERVICES_SORTED_HEADER);
             while (rankingIterator.hasNext()) {
                 TwoWayList<Services> listOfservice = rankingIterator.next();
+                if(listOfservice == null) continue;
                 for(int i = 0; i< listOfservice.size(); i++){
                     Services service = listOfservice.get(i);
                     System.out.printf(RANKING_COMMAND, service.getServiceName(), service.getAverageStars());

@@ -167,7 +167,7 @@ public class ListInArray<E> implements List<E> {
     @SuppressWarnings("unchecked")
     public void add(int position, E element) {
         //TODO: Left as an exercise.
-        if(position < 0 || position > size()) throw new InvalidPositionException();
+        if(position < 0 || position >  elems.length) throw new InvalidPositionException();
         if(position == 0) {addFirst(element); return;}
         if (position == counter){ addLast(element); return;}
 

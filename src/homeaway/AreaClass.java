@@ -78,7 +78,10 @@ public class AreaClass implements Serializable, Area {
 
         servicesByInsertion.addLast(newService);
         services.put(serviceName.toUpperCase() ,newService); // Modificado
-         // servicesByRank.get()
+
+        TwoWayList<Services> list = new DoublyLinkedList<>();
+        list.addLast(newService);
+        servicesByRank.add(1,list); // 1 the second postion 5,4,3,2,1 stars
         // servicesByRank.add(serviceName,newService); // Modificado
 
     }
