@@ -33,7 +33,7 @@ public interface HomeAwaySystem extends Serializable {
      * Asks the load area (current area) to the iterator of the services
      * @return -
      */
-    Iterator<Map.Entry<String,Services>> getServiceIterator();
+    Iterator<Services> getServiceIterator();
 
     /**
      * Checks if there is any area with the given name (if there is an area at the dat structure with the name given)

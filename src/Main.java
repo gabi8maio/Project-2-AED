@@ -186,9 +186,9 @@ public class Main {
      */
     private static void executeServices(HomeAwaySystem system) {
         try {
-            Iterator<Map.Entry<String, Services>> serviceIterator = system.getServiceIterator();
+            Iterator<Services> serviceIterator = system.getServiceIterator();
             while (serviceIterator.hasNext()) {
-                Services service = serviceIterator.next().value();
+                Services service = serviceIterator.next();
                 System.out.printf(SERVICES_COMMAND, service.getServiceName(),
                         service.getServiceType().toLowerCase(),
                         service.getLatitude(),

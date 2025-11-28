@@ -70,10 +70,14 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     }
 
     @Override
-    public Iterator<Map.Entry<String,Services>> getServiceIterator() throws NoServicesYetException {
-        Iterator<Map.Entry<String,Services>> servicesIterator = loadedArea.getServicesIterator();
+    public Iterator<Services> getServiceIterator() throws NoServicesYetException {
+
+        Iterator<Services> servicesIterator = loadedArea.getServicesIterator();
         if(!servicesIterator.hasNext()) throw new NoServicesYetException();
         return loadedArea.getServicesIterator();
+       /* Iterator<Map.Entry<String,Services>> servicesIterator = loadedArea.getServicesIterator();
+        if(!servicesIterator.hasNext()) throw new NoServicesYetException();
+        return loadedArea.getServicesIterator();*/
     }
 
     @Override
@@ -273,7 +277,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
             else return list.iterator();
         } else {
             Iterator<Students> countryStudentIterator = getStudentsByCountryIterator(argument);
-            if (!countryStudentIterator.hasNext()) {
+            if (countryStudentIterator == null || !countryStudentIterator.hasNext()) {
                 throw new NoStudentsFromCountryException();
             } else {
                 return countryStudentIterator;

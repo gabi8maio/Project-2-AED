@@ -63,7 +63,7 @@ public interface Area extends Serializable {
     /**
      * @return - An iterator of the all the services
      */
-    Iterator<Map.Entry<String,Services>> getServicesIterator();
+    Iterator<Services> getServicesIterator();
 
     /**
      * @return - An iterator of all the students

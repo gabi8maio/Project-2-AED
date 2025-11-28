@@ -22,6 +22,7 @@ public class AreaClass implements Serializable, Area {
 
     private final Map<String, Services> services;
     private final TwoWayList<Services> servicesByInsertion;
+    private final TwoWayList<Students>  studentsByInsertion;
     private final List<TwoWayList <Services>> servicesByRank;
     private final SortedMap<String, Students> allStudents;
     private final Map<String,TwoWayList<Students>> studentsByCountry;
@@ -40,6 +41,7 @@ public class AreaClass implements Serializable, Area {
         this.leftLongitude = leftLongitude;
         this.rightLongitude = rightLongitude;
         servicesByInsertion = new DoublyLinkedList<>();
+        studentsByInsertion = new DoublyLinkedList<>();
         services = new SepChainHashTable<>();
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
@@ -74,7 +76,7 @@ public class AreaClass implements Serializable, Area {
 
         servicesByInsertion.addLast(newService);
         services.put(serviceName.toUpperCase() ,newService); // Modificado
-       // servicesByRank.get()
+         // servicesByRank.get()
         // servicesByRank.add(serviceName,newService); // Modificado
 
     }
@@ -95,10 +97,12 @@ public class AreaClass implements Serializable, Area {
         service.addStudentsThereLodging();
 
 
-        allStudents.put(name.toUpperCase(),newStudent);                                   // Modificado
-        TwoWayList<Students> studentsFromCountry = studentsByCountry.get(country.toUpperCase());// Modificado
-        studentsFromCountry.addLast(newStudent);                                 // Modificado
-        studentsByCountry.put(country.toUpperCase(),studentsFromCountry);                     // Modificado
+        allStudents.put(name.toUpperCase(),newStudent);
+        //Modificado --------------------
+        TwoWayList<Students> studentsFromCountry = studentsByCountry.get(country.toUpperCase());
+        if (studentsFromCountry == null) studentsFromCountry = new DoublyLinkedList<>();
+        studentsFromCountry.addLast(newStudent);
+        studentsByCountry.put(country.toUpperCase(), studentsFromCountry);
     }
 
     @Override
@@ -111,6 +115,9 @@ public class AreaClass implements Serializable, Area {
         Services homeService = student.getPlaceHome();
 
         //-------------------------------------------
+        for (int i = 0; i< studentsByInsertion.size(); i++){
+            if(studentsByInsertion.get(i).getName().equalsIgnoreCase(studentName)) studentsByInsertion.remove(i);
+        }
         allStudents.remove(studentName); // Modificado
         TwoWayList<Students> studentsList = studentsByCountry.get(country.toUpperCase());
 
@@ -202,8 +209,8 @@ public class AreaClass implements Serializable, Area {
         }
     }
     @Override
-    public Iterator<Map.Entry<String,Services>> getServicesIterator() {
-        return services.iterator();
+    public Iterator<Services> getServicesIterator() {
+        return servicesByInsertion.iterator();
     }
 
     public Iterator<Map.Entry<String,Students>> getAllStudentsIterator(){
@@ -212,6 +219,8 @@ public class AreaClass implements Serializable, Area {
     @Override
     public Iterator<Students> getStudentsByCountryIterator(String country){
 
+        if(studentsByCountry.isEmpty()) return null;
+        if(studentsByCountry.get(country.toUpperCase()) == null) return null;
         TwoWayList<Students> list = studentsByCountry.get(country.toUpperCase());
         return list.iterator();
     }
@@ -314,6 +323,8 @@ public class AreaClass implements Serializable, Area {
     }
 
     public String studentExists(String name) {
+        if(allStudents.isEmpty()) return null;
+        if(allStudents.get(name.toUpperCase()) == null) return null;
         return allStudents.get(name.toUpperCase()).getName();
     }
     @Override
