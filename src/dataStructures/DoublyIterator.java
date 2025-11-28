@@ -8,11 +8,11 @@ import dataStructures.exceptions.NoSuchElementException;
  * @param <E> Generic Element
  *
  */
-class DoublyIterator<E> implements Iterator<E> {
+public class DoublyIterator<E> implements Iterator<E> {
     /**
      * Node with the first element in the iteration.
      */
-    private final DoublyListNode<E> firstNode;
+    protected DoublyListNode<E> firstNode; // changed To protected
 
     /**
      * Node with the next element in the iteration.
@@ -26,7 +26,8 @@ class DoublyIterator<E> implements Iterator<E> {
      * @param first - Node with the first element of the iteration
      */
     public DoublyIterator(DoublyListNode<E> first) {
-        this.firstNode = first;
+        //TODO: Left as an exercise.
+        firstNode = first;
         nextToReturn = first;
     }
     /**
@@ -36,18 +37,22 @@ class DoublyIterator<E> implements Iterator<E> {
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
     public E next( ){
-        if (!this.hasNext())
+        //TODO: Left as an exercise.
+        if (!hasNext())
             throw new NoSuchElementException();
-        E element = nextToReturn.getElement();
+
+        DoublyListNode<E> now = nextToReturn;
         nextToReturn = nextToReturn.getNext();
-        return element;
+        return now.getElement();
     }
 
     /**
      * Restart the iterator
      */
     public void rewind() {
+        //TODO: Left as an exercise.
         nextToReturn = firstNode;
+
     }
     /**
      * Returns true if next would return an element
@@ -55,6 +60,7 @@ class DoublyIterator<E> implements Iterator<E> {
      * @return true iff the iteration has more elements
      */
     public boolean hasNext( ) {
+        //TODO: Left as an exercise.
         return nextToReturn != null;
     }
 

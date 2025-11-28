@@ -64,9 +64,8 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getFirst() {
-        if (isEmpty()) {
-            throw new NoSuchElementException();
-        }
+        //TODO: Left as an exercise.
+        if(size() == 0) throw new NoSuchElementException();
         return elems[0];
     }
 
@@ -77,10 +76,9 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getLast() {
-        if (isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        return elems[counter-1];
+        //TODO: Left as an exercise.
+        if(size() == 0) throw new NoSuchElementException();
+        return elems[counter - 1];
     }
 
     /**
@@ -94,13 +92,9 @@ public class ListInArray<E> implements List<E> {
      * @throws InvalidPositionException if position is not valid in the list
      */
     public E get(int position) {
-        if (position<0 || position>=counter) {
-            throw new InvalidPositionException();
-        }
-        if (position == 0)
-            return getFirst();
-        if (position == counter - 1)
-            return getLast();
+        //TODO: Left as an exercise.
+        if(position < 0 || position >= counter) throw new InvalidPositionException();
+
         return elems[position];
     }
 
@@ -113,10 +107,9 @@ public class ListInArray<E> implements List<E> {
      * @return position of the first occurrence of the element in the list (or -1)
      */
     public int indexOf(E element) {
-        for (int i = 0; i < counter; i++) {
-            if (elems[i].equals(element)) {
-                return i;
-            }
+        //TODO: Left as an exercise.
+        for(int i = 0; i < counter; i++){
+            if(elems[i].equals(element)) return i;
         }
         return -1;
     }
@@ -126,10 +119,21 @@ public class ListInArray<E> implements List<E> {
      *
      * @param element to be inserted
      */
+    @SuppressWarnings("unchecked")
     public void addFirst(E element) {
-        shiftToLeft(0);
+        //TODO: Left as an exercise.
+
+        if(size() == elems.length){
+            E[] newOne = (E[]) new Object[elems.length * 2];
+            for (int i = 0; i < counter; i++) newOne[i] = elems[i];
+
+            elems = newOne;
+        }
+        for(int i = counter; i > 0; i--){
+            elems[i] = elems[i - 1];
+        }
+        elems[0] = element;
         counter++;
-        elems[1] = element;
     }
 
     /**
@@ -137,9 +141,17 @@ public class ListInArray<E> implements List<E> {
      *
      * @param element to be inserted
      */
+    @SuppressWarnings("unchecked")
     public void addLast(E element) {
+        //TODO: Left as an exercise.
+        if(size() == elems.length){
+            E[] newOne = (E[]) new Object[elems.length * 2];
+            for (int i = 0; i < counter; i++) newOne[i] = elems[i];
+
+            elems = newOne;
+        }
+        elems[counter] = element;
         counter++;
-        elems[counter-1] = element;
     }
 
     /**
@@ -152,24 +164,22 @@ public class ListInArray<E> implements List<E> {
      * @param element  - element to be inserted
      * @throws InvalidPositionException - if position is not valid in the list
      */
+    @SuppressWarnings("unchecked")
     public void add(int position, E element) {
-        if (position < 0 || position >= counter) {
-            throw new InvalidPositionException();
+        //TODO: Left as an exercise.
+        if(position < 0 || position > size()) throw new InvalidPositionException();
+        if(position == 0) {addFirst(element); return;}
+        if (position == counter){ addLast(element); return;}
+
+        if(size() == elems.length){
+            E[] newOne = (E[]) new Object[elems.length * 2];
+            if (counter >= 0) System.arraycopy(elems, 0, newOne, 0, counter);
+            elems = newOne;
         }
-        else if (isFull()) {
-            grow();
-        }
-        else if (position == 0) {
-            addFirst(element);
-        }
-        else if (position == counter -1 ){
-            addLast(element);
-        }
-        else {
-            shiftToRight(position);
-            counter++;
-            elems[position] = element;
-        }
+        for(int i = counter; i > position; i--)elems[i] = elems[i - 1];
+        elems[position] = element;
+        counter++;
+
     }
 
     /**
@@ -179,13 +189,13 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E removeFirst() {
-        if (isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        E element = elems [0];
-        shiftToLeft(0);
-        counter--;
-        return element;
+        //TODO: Left as an exercise.
+        if(size() == 0) throw new NoSuchElementException();
+
+        E removed = elems[0];
+        for(int i = 0; i < counter - 1; i++) elems[i] = elems[i + 1];
+        elems[--counter] = null;
+        return removed;
     }
 
     /**
@@ -195,12 +205,13 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E removeLast() {
-        if (isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        E element = elems[counter-1];
+        //TODO: Left as an exercise.
+        if(size() == 0) throw new NoSuchElementException();
+
+        E lastEle = elems[size() - 1];
+        elems[size() - 1] = null;
         counter--;
-        return element;
+        return lastEle;
     }
 
     /**
@@ -214,46 +225,11 @@ public class ListInArray<E> implements List<E> {
      * @throws InvalidPositionException - if position is not valid in the list
      */
     public E remove(int position) {
-        if (position < 0 || position >= counter) {
-            throw new InvalidPositionException();
-        }
-        else if (position == 0) {
-            return removeFirst();
-        }
-        else if (position == counter - 1) {
-            return removeLast();
-        }
-        else {
-            E element = elems[position];
-            shiftToLeft(position);
-            counter--;
-            return element;
-        }
-    }
-
-    private boolean isFull (){
-        return counter == elems.length;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void grow (){
-        int newCapacity = elems.length * FACTOR;
-        E []elemsTemp = (E[]) new Object[newCapacity];
-        for (int i = 0; i < counter; i++) {
-            elemsTemp[i] = elems[i];
-        }
-        elems = elemsTemp;
-    }
-
-    private void shiftToRight (int position) {
-        for (int i = position; i < counter - 1; i++) {
-            elems[i] = elems[i + 1];
-        }
-    }
-
-    private void shiftToLeft (int position) {
-        for (int i = counter-1; i >= position; i--) {
-            elems[i] = elems[i - 1];
-        }
+        //TODO: Left as an exercise.
+        if(position < 0 || position >= counter) throw new InvalidPositionException();
+        E removed = elems[position];
+        for(int i = position; i < counter - 1; i++) elems[i] = elems[i + 1];
+        elems[--counter] = null;
+        return removed;
     }
 }

@@ -7,9 +7,10 @@ package dataStructures;
  *
  */
 class ArrayIterator<E> implements Iterator<E> {
-    private E[] elems;
-    private int counter;
+    private final E[] elems;
+    private final int counter;
     private int current;
+
 
     public ArrayIterator(E[] elems, int counter) {
         this.elems = elems;
@@ -19,16 +20,19 @@ class ArrayIterator<E> implements Iterator<E> {
 
     @Override
     public void rewind() {
+        //TODO: Left as an exercise.
         current = 0;
     }
 
     @Override
     public boolean hasNext() {
+        //TODO: Left as an exercise.
         return current < counter;
     }
 
     @Override
     public E next() {
+        //TODO: Left as an exercise.
         return elems[current++];
     }
 

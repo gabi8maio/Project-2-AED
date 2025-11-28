@@ -15,12 +15,12 @@ public class FilterIterator<E> implements Iterator<E> {
     /**
      *  Iterator of elements to filter.
      */
-    private final Iterator<E> iterator;
+    private Iterator<E> iterator;
 
     /**
      *  Filter.
      */
-    private final Predicate<E> filter;
+    private Predicate<E> filter;
 
     /**
      * Node with the next element in the iteration.
@@ -33,9 +33,9 @@ public class FilterIterator<E> implements Iterator<E> {
      * @param filter
      */
     public FilterIterator(Iterator<E> list, Predicate<E> filter) {
-        this.iterator = list;
+        //TODO: Left as an exercise.
+        iterator = list;
         this.filter = filter;
-        advanceNext();
     }
 
     /**
@@ -44,7 +44,17 @@ public class FilterIterator<E> implements Iterator<E> {
      * @return true iff the iteration has more elements
      */
     public boolean hasNext() {
-        return nextToReturn != null;
+        //TODO: Left as an exercise.
+
+        while(iterator.hasNext()){
+            E tryNext = iterator.next();
+            if(filter.check(tryNext)){
+                nextToReturn = tryNext;
+                return true;
+            }
+        }
+        nextToReturn = null;
+        return false;
     }
 
     /**
@@ -54,11 +64,8 @@ public class FilterIterator<E> implements Iterator<E> {
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
     public E next() {
-        if (!hasNext())
-            throw new NoSuchElementException();
-        E element = nextToReturn;
-        advanceNext();
-        return element;
+        //TODO: Left as an exercise.
+        return nextToReturn;
     }
 
     /**
@@ -66,20 +73,9 @@ public class FilterIterator<E> implements Iterator<E> {
      * After rewind, if the iteration is not empty, next will return the first element.
      */
     public void rewind() {
-        this.iterator.rewind();
-        advanceNext();
-    }
-
-    private void advanceNext() {
+        //TODO: Left as an exercise.
+        iterator.rewind();
         nextToReturn = null;
-        boolean found = false;
-        while (iterator.hasNext() && !found) {
-            E element = iterator.next();
-            if (filter.check(element)) {
-                nextToReturn = element;
-                found = true;
-            }
-        }
     }
 
 }

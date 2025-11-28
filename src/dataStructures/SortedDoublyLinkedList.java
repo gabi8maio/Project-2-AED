@@ -2,6 +2,8 @@ package dataStructures;
 
 import dataStructures.exceptions.*;
 
+import java.io.*;
+
 
 /**
  * Sorted Doubly linked list Implementation
@@ -10,20 +12,20 @@ import dataStructures.exceptions.*;
  * @param <E> Generic Element
  *
  */
-public class SortedDoublyLinkedList<E> implements SortedList<E> {
+public class SortedDoublyLinkedList<E> implements SortedList<E>, Serializable {
 
     /**
      *  Node at the head of the list.
      */
-    private DoublyListNode<E> head;
+    private transient DoublyListNode<E> head;
     /**
      * Node at the tail of the list.
      */
-    private DoublyListNode<E> tail;
+    private transient DoublyListNode<E> tail;
     /**
      * Number of elements in the list.
      */
-    private int currentSize;
+    private transient int currentSize;
     /**
      * Comparator of elements.
      */
@@ -34,11 +36,35 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * currentSize is initialized as 0.
      */
     public SortedDoublyLinkedList(Comparator<E> comparator) {
+        //TODO: Left as an exercise.
         this.comparator = comparator;
         head = null;
         tail = null;
         currentSize = 0;
     }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject(); // escreve os campos normais (não temos aqui, mas é boa prática)
+        oos.writeInt(currentSize); // escreve o tamanho
+        DoublyListNode node = head;
+        while (node != null) {
+            oos.writeObject(node.getElement()); // escreve cada elemento
+            node = node.getNext();
+        }
+        oos.flush();
+    }
+
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject(); // lê os campos normais
+        int size = ois.readInt(); // lê o tamanho
+        for (int i = 0; i < size; i++) {
+            @SuppressWarnings("unchecked")
+            E element = (E) ois.readObject();
+            add(element); // recria os nós
+        }
+    }
+
 
     /**
      * Returns true iff the list contains no elements.
@@ -71,11 +97,9 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getMin( ) {
-        if (size() == 0)
-            throw new NoSuchElementException();
-        if (head != null)
-            return head.getElement();
-        return null;
+        //TODO: Left as an exercise.
+        if(currentSize == 0) throw new NoSuchElementException();
+        return head.getElement();
     }
 
     /**
@@ -84,22 +108,22 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getMax( ) {
-        if (size() == 0)
-            throw new NoSuchElementException();
-        if (tail != null)
-            return tail.getElement();
-        return null;
+        //TODO: Left as an exercise.
+        if(currentSize == 0) throw new NoSuchElementException();
+        return tail.getElement();
     }
     /**
      * Returns the first occurrence of the element equals to the given element in the list.
      * @return element in the list or null
      */
     public E get(E element) {
-        Iterator <E> iterator = iterator();
-        while (iterator.hasNext()) {
-            E current = iterator.next();
-            if (comparator.compare(current, element) == 0)
-                return current;
+        //TODO: Left as an exercise.
+        DoublyListNode<E> nextToCheck = head;
+        while(nextToCheck != null){
+            int cmp = comparator.compare(nextToCheck.getElement(), element);
+            if(cmp == 0) return nextToCheck.getElement();
+            if(cmp > 0) return null;
+            nextToCheck = nextToCheck.getNext();
         }
         return null;
     }
@@ -111,7 +135,15 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @return true iff the element exists in the list.
      */
     public boolean contains(E element) {
-        return get(element) != null;
+        //TODO: Left as an exercise.
+        DoublyListNode<E> current = head;
+        while (current != null) {
+            int cmp = comparator.compare(current.getElement(), element);
+            if (cmp == 0) return true;
+            else if (cmp > 0) return false;
+            current = current.getNext(); // < 0
+        }
+        return false;
     }
 
     /**
@@ -120,44 +152,44 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @param element to be inserted
      */
     public void add(E element) {
-        DoublyListNode<E> nodeToCompare = head;
-        DoublyListNode<E> newNode = new DoublyListNode<>(element);
-        if (this.isEmpty()) {
+        //TODO: Left as an exercise.
+        if (head == null) {
+            DoublyListNode<E> newNode = new DoublyListNode<>(element);
             head = newNode;
             tail = newNode;
             currentSize++;
+            return;
+        }
 
+        DoublyListNode<E> current = head;
+        DoublyListNode<E> previous = null;
 
-        }else if (comparator.compare(element, head.getElement()) < 0 ) {
+        while (current != null && comparator.compare(current.getElement(), element) < 0) {
+            previous = current;
+            current = current.getNext();
+        }
+        DoublyListNode<E> newNode = new DoublyListNode<>(element);
+
+        // Insert on the Head -
+        if (previous == null) {
             newNode.setNext(head);
             head.setPrevious(newNode);
             head = newNode;
-            currentSize++;
-        }else if (comparator.compare(element, head.getElement()) == 0 ) {
-            DoublyListNode<E> next = head.getNext();
-            head.setNext(newNode);
-            newNode.setNext(next);
-            next.setNext(newNode);
-            newNode.setPrevious(head);
-            currentSize++;
-        }else if (comparator.compare(element, tail.getElement()) >= 0) {
+        }
+        // Insert on the Tail
+        else if (current == null) {
             tail.setNext(newNode);
             newNode.setPrevious(tail);
             tail = newNode;
-            currentSize++;
-
-        } else {
-            while (comparator.compare(nodeToCompare.getElement(), element) <= 0 && nodeToCompare.getNext() != null) {
-                nodeToCompare = nodeToCompare.getNext();
-            }
-
-            DoublyListNode<E> prev = nodeToCompare.getPrevious();
-            prev.setNext(newNode);
-            newNode.setPrevious(prev);
-            newNode.setNext(nodeToCompare);
-            nodeToCompare.setPrevious(newNode);
-            currentSize++;
         }
+        // Insert in the middle.
+        else {
+            previous.setNext(newNode);
+            newNode.setPrevious(previous);
+            newNode.setNext(current);
+            current.setPrevious(newNode);
+        }
+        currentSize++;
     }
 
     /**
@@ -165,41 +197,27 @@ public class SortedDoublyLinkedList<E> implements SortedList<E> {
      * @return element removed from the list or null if !belongs(element)
      */
     public E remove(E element) {
-        if (isEmpty()){
-            return null;
-        }
-        DoublyListNode<E> current = head;
-        DoublyListNode<E> nodeToRemove = null;
-        while (current != null &&  nodeToRemove == null) {
-            if (comparator.compare(current.getElement(), element) == 0) {
-                nodeToRemove = current;
-            }
-            current = current.getNext();
-        }
+        //TODO: Left as an exercise.
+        DoublyListNode<E> nodeToRemove = head;
+        while (nodeToRemove != null) {
+            int cmp = comparator.compare(nodeToRemove.getElement(), element);
+            if (cmp == 0) {
 
-        if (nodeToRemove == null) {
-            return null;
-        }
+                DoublyListNode<E> previous = nodeToRemove.getPrevious();
+                DoublyListNode<E> next = nodeToRemove.getNext();
 
-        E removedElement = nodeToRemove.getElement();
+                if (previous != null) previous.setNext(next);
+                else head = next;
 
-        if (currentSize==1){
-            head=null;
-            tail=null;
-        }else if (nodeToRemove == head){
-            head=head.getNext();
-            head.setPrevious(null);
-        }else if (nodeToRemove==tail){
-            tail=tail.getPrevious();
-            tail.setNext(null);
-        }else{
-            DoublyListNode<E> prev = nodeToRemove.getPrevious();
-            DoublyListNode<E> next = nodeToRemove.getNext();
-            prev.setNext(next);
-            next.setPrevious(prev);
+                if (next != null) next.setPrevious(previous);
+                else tail = previous;
+
+                currentSize--;
+                return nodeToRemove.getElement();
+            } else if (cmp > 0) return null;
+            nodeToRemove = nodeToRemove.getNext();
         }
-        currentSize--;
-        return removedElement;
+        return null;
     }
 
 }
