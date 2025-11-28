@@ -110,7 +110,7 @@ public interface Area extends Serializable {
      * Method used to iterate the services ordered by the number of stars and the last updated service
      * @return
      */
-    Iterator<TwoWayList<Services>> getServicesByRankingIterator();
+    Iterator<SortedList<Services>> getServicesByRankingIterator();
 
     /**
      * @param studentName - The name of Student given

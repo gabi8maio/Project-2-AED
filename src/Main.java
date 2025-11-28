@@ -3,10 +3,7 @@
  *  Diogo Figueiredo 70764 dam.figueiredo@campus.fct.unl.pt
  */
 
-import dataStructures.Iterator;
-import dataStructures.Map;
-import dataStructures.TwoWayIterator;
-import dataStructures.TwoWayList;
+import dataStructures.*;
 import homeaway.*;
 import homeaway.Exeptions.*;
 import java.util.Scanner;
@@ -406,15 +403,17 @@ public class Main {
      */
     private static void executeRanking( HomeAwaySystem system) {
         try {
-            Iterator<TwoWayList<Services>> rankingIterator = system.getServicesByRankingIterator();
+            Iterator<SortedList<Services>> rankingIterator = system.getServicesByRankingIterator();
             System.out.println(SERVICES_SORTED_HEADER);
             while (rankingIterator.hasNext()) {
-                TwoWayList<Services> listOfservice = rankingIterator.next();
+                SortedList<Services> listOfservice = rankingIterator.next();
                 if(listOfservice == null) continue;
+                Iterator<Services> it = listOfservice.iterator();
+                while(it.hasNext()){
                 for(int i = 0; i< listOfservice.size(); i++){
-                    Services service = listOfservice.get(i);
+                    Services service = it.next();
                     System.out.printf(RANKING_COMMAND, service.getServiceName(), service.getAverageStars());
-                }
+                }}
             }
         } catch (NoServicesInSystemException e) {
             System.out.println(e.getMessage());

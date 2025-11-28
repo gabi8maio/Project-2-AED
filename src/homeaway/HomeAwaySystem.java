@@ -4,10 +4,7 @@
  */
 package homeaway;
 
-import dataStructures.Iterator;
-import dataStructures.Map;
-import dataStructures.TwoWayIterator;
-import dataStructures.TwoWayList;
+import dataStructures.*;
 import homeaway.Exeptions.*;
 
 import java.io.Serializable;
@@ -120,7 +117,7 @@ public interface HomeAwaySystem extends Serializable {
      * @return An iterator of the services ordered by ranking
      * @throws NoServicesInSystemException - If there are no services in the system
      */
-    Iterator<TwoWayList<Services>> getServicesByRankingIterator()
+    Iterator<SortedList<Services>> getServicesByRankingIterator()
             throws NoServicesInSystemException;
 
     /**

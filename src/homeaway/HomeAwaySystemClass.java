@@ -81,7 +81,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     @Override
     public Iterator<Services> getServicesByTagIterator(String tag) throws NoServicesWithTagException{
         Iterator <Services> tagIterator = loadedArea.getServicesByTagIterator(tag);
-        if (!tagIterator.hasNext()) {
+        if (tagIterator == null || !tagIterator.hasNext()) {
             throw new NoServicesWithTagException();
         }
         return loadedArea.getServicesByTagIterator(tag);
@@ -107,8 +107,8 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     }
 
     @Override
-    public Iterator<TwoWayList<Services>> getServicesByRankingIterator() throws NoServicesInSystemException{
-        Iterator<TwoWayList<Services>> rankingIterator = loadedArea.getServicesByRankingIterator();
+    public Iterator<SortedList<Services>> getServicesByRankingIterator() throws NoServicesInSystemException{
+        Iterator<SortedList<Services>> rankingIterator = loadedArea.getServicesByRankingIterator();
         if (!rankingIterator.hasNext()) {
             throw new NoServicesInSystemException();
         }
