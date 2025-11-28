@@ -72,8 +72,6 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     @Override
     public Iterator<Services> getServiceIterator() throws NoServicesYetException {
 
-        Iterator<Services> servicesIterator = loadedArea.getServicesIterator();
-        if(!servicesIterator.hasNext()) throw new NoServicesYetException();
         return loadedArea.getServicesIterator();
        /* Iterator<Map.Entry<String,Services>> servicesIterator = loadedArea.getServicesIterator();
         if(!servicesIterator.hasNext()) throw new NoServicesYetException();

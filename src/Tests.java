@@ -53,7 +53,7 @@ public class Tests {
     @Test public void test05() { test("input5","output5"); }
     @Test public void test06() { test("input6","output6"); }
     @Test public void test07() { test("input7","output7"); }
-   /* @Test public void test08() { test("input8","output8"); }
+    @Test public void test08() { test("input8","output8"); }
     @Test public void test09() { test("input9","output9"); }
     @Test public void test10() { test("input10","output10"); }
     @Test public void test11() { test("input11","output11"); }
@@ -64,7 +64,7 @@ public class Tests {
     @Test public void test16() { test("input16","output16"); }
     @Test public void test17() { test("input17","output17"); }
     @Test public void test18() { test("input18","output18"); }
-*/
+
     /**
      * The BASE constant specifies the directory where the test files are located.
      */

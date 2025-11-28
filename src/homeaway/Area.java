@@ -5,6 +5,8 @@
 package homeaway;
 
 import dataStructures.*;
+import homeaway.Exeptions.NoServicesYetException;
+
 import java.io.Serializable;
 
 public interface Area extends Serializable {
@@ -63,7 +65,7 @@ public interface Area extends Serializable {
     /**
      * @return - An iterator of the all the services
      */
-    Iterator<Services> getServicesIterator();
+    Iterator<Services> getServicesIterator() throws NoServicesYetException;
 
     /**
      * @return - An iterator of all the students

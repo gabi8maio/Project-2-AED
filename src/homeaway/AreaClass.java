@@ -5,6 +5,8 @@
 package homeaway;
 import dataStructures.*;
 import dataStructures.exceptions.InvalidPositionException;
+import dataStructures.exceptions.NoSuchElementException;
+import homeaway.Exeptions.NoServicesYetException;
 
 import java.io.Serializable;
 
@@ -288,7 +290,9 @@ public class AreaClass implements Serializable, Area {
         }
     }
     @Override
-    public Iterator<Services> getServicesIterator() {
+    public Iterator<Services> getServicesIterator() throws NoServicesYetException{
+        if (servicesByInsertion.isEmpty())
+            throw new NoServicesYetException();
         return servicesByInsertion.iterator();
     }
 
