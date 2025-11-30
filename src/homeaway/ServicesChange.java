@@ -42,12 +42,6 @@ public interface ServicesChange {
     void removeStudentsThereLodging();
 
     /**
-     * The number when the service was inserted, lower it means that is older
-     * @return the number of insertion
-     */
-    int getNumOfInsertion();
-
-    /**
      * Set the number that was inserted on the Area.
      * (If the number is smaller than other the service is older)
      * @param counter The number of Insertion

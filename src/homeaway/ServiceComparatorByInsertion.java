@@ -9,7 +9,7 @@ public class ServiceComparatorByInsertion implements Comparator<Services>, Seria
     @Override
     public int compare(Services o1, Services o2)  {
         // First compare by stars DESCENDING (higher stars first)
-        return Integer.compare(o1.getNumOfInsertion(), o2.getNumOfInsertion());
+        return Integer.compare(o2.getLastUpdatedOrder(), o1.getLastUpdatedOrder());
     }
 }
 

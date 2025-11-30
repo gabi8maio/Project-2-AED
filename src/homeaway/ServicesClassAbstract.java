@@ -119,10 +119,6 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
     public void setNumOfInsertion(int counter){
         numOfServiceInsertion = counter;
     }
-
-    public int getNumOfInsertion(){
-        return numOfServiceInsertion;
-    }
     @Override
     public void addRating(int stars,String tag, int counter) {
         int oldAverage = averageStars;
