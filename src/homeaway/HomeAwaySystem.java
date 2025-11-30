@@ -117,7 +117,7 @@ public interface HomeAwaySystem extends Serializable {
      * @return An iterator of the services ordered by ranking
      * @throws NoServicesInSystemException - If there are no services in the system
      */
-    Iterator<SortedList<Services>> getServicesByRankingIterator()
+    Iterator<TwoWayList<Services>> getServicesByRankingIterator()
             throws NoServicesInSystemException;
 
     /**

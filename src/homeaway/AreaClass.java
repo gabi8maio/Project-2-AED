@@ -25,7 +25,7 @@ public class AreaClass implements Serializable, Area {
     private final Map<String, Services> services;
     private final TwoWayList<Services> servicesByInsertion;
     private final TwoWayList<Students>  studentsByInsertion;
-    private final List<SortedList<Services>> servicesByRank;
+    private final List<TwoWayList<Services>> servicesByRank;
     private final SortedMap<String, Students> allStudents;
     private final Map<String,TwoWayList<Students>> studentsByCountry;
     private final Map <String, SortedList<Services>> tags;
@@ -48,11 +48,11 @@ public class AreaClass implements Serializable, Area {
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new AVLSortedMap<>();
         servicesByRank = new ListInArray<>(MAX_NUM_STARS);
-        servicesByRank.add(0,new SortedDoublyLinkedList<>(new ServiceComparatorByStars()));
-        servicesByRank.add(1,new SortedDoublyLinkedList<>(new ServiceComparatorByStars()));
-        servicesByRank.add(2,new SortedDoublyLinkedList<>(new ServiceComparatorByStars()));
-        servicesByRank.add(3,new SortedDoublyLinkedList<>(new ServiceComparatorByStars()));
-        servicesByRank.add(4,new SortedDoublyLinkedList<>(new ServiceComparatorByStars()));
+        servicesByRank.add(0,new DoublyLinkedList<>());
+        servicesByRank.add(1,new DoublyLinkedList<>());
+        servicesByRank.add(2,new DoublyLinkedList<>());
+        servicesByRank.add(3,new DoublyLinkedList<>());
+        servicesByRank.add(4,new DoublyLinkedList<>());
         tags = new SepChainHashTable<>();
         updateCounter = 0;
         counterOfServicesInsertion =0;
@@ -84,14 +84,14 @@ public class AreaClass implements Serializable, Area {
         servicesByInsertion.addLast(newService);
         services.put(serviceName.toUpperCase() ,newService); // Modificado
 
-        SortedList<Services> list;
+        TwoWayList<Services> list;
 
         list = servicesByRank.get(1);
         if(list == null){
-            list = new SortedDoublyLinkedList<>(new ServiceComparatorByStars());
-            list.add(newService);
+            list = new DoublyLinkedList<>();
+            list.addLast(newService);
         }else
-            list.add(newService);
+            list.addLast(newService);
         if(!servicesByRank.isEmpty())
             servicesByRank.remove(1);
         servicesByRank.add(1,list); // 1 the second postion 5,4,3,2,1 stars
@@ -289,24 +289,25 @@ public class AreaClass implements Serializable, Area {
         Services service = findServicesElem(serviceName);
         assert service != null;
 
-        // Remove service from current position
-        for (int i = 0; i < servicesByRank.size(); i++) {
-            SortedList<Services> list = servicesByRank.get(i);
-            if (list != null && list.contains(service)) {
-                list.remove(service); // Assuming SortedList has remove by element
-                break;
-            }
-        }
+       if (service.addRating(rating, tag, updateCounter++) != -1){
+           // Remove service from current position
+           for (int i = 0; i < servicesByRank.size(); i++) {
+               TwoWayList<Services> list = servicesByRank.get(i);
+               if (list != null && list.indexOf(service) != -1) {
+                   list.remove(list.indexOf(service)); // Assuming SortedList has remove by element
+                   break;
+               }
+           }
 
-        // Update rating
-        service.addRating(rating, tag, updateCounter++);
-
-        // Add to correct position based on new rating
-        int newIndex = 5 - service.getAverageStars();
+           // Add to correct position based on new rating
+           int newIndex = 5 - service.getAverageStars();
 
 
-        servicesByRank.get(newIndex).add(service);
-        updateTags(tag, servicesByRank.get(newIndex).get(service));
+           servicesByRank.get(newIndex).addLast(service);
+           TwoWayList<Services> list = servicesByRank.get(newIndex);
+           int index = list.indexOf(service);
+           updateTags(tag, list.get(index));
+       }
     }
 
     private void updateTags(String tag, Services newService) {
@@ -390,10 +391,10 @@ public class AreaClass implements Serializable, Area {
         Services studentLocation = student.getPlaceNow();
         long minDistance = Long.MAX_VALUE;
         ListInArray <Services> tempList = new ListInArray<>(20);
-        Iterator<SortedList<Services>> iterator = servicesByRank.iterator();
+        Iterator<TwoWayList<Services>> iterator = servicesByRank.iterator();
         int i = 0;
         while (iterator.hasNext()) {
-            SortedList<Services> list = iterator.next();
+            TwoWayList<Services> list = iterator.next();
             Iterator<Services> it = list.iterator();
             while(it.hasNext()){
                 Services service = it.next();
@@ -418,7 +419,7 @@ public class AreaClass implements Serializable, Area {
 
     }
     @Override
-    public Iterator<SortedList<Services>> getServicesByRankingIterator(){
+    public Iterator<TwoWayList<Services>> getServicesByRankingIterator(){
         return servicesByRank.iterator();
     }
     @Override
@@ -541,10 +542,10 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public boolean isTypeWithAverage(String type, int n){
-        Iterator<SortedList<Services>> iterator = servicesByRank.iterator();
+        Iterator<TwoWayList<Services>> iterator = servicesByRank.iterator();
         int i = 0;
         while (iterator.hasNext()) { // Modificado
-            SortedList<Services> list = iterator.next();
+            TwoWayList<Services> list = iterator.next();
             Iterator<Services> it = list.iterator();
             while(it.hasNext()){
                 Services service = it.next();

@@ -403,10 +403,10 @@ public class Main {
      */
     private static void executeRanking( HomeAwaySystem system) {
         try {
-            Iterator<SortedList<Services>> rankingIterator = system.getServicesByRankingIterator();
+            Iterator<TwoWayList<Services>> rankingIterator = system.getServicesByRankingIterator();
             System.out.println(SERVICES_SORTED_HEADER);
             while (rankingIterator.hasNext()) {
-                SortedList<Services> listOfservice = rankingIterator.next();
+                TwoWayList<Services> listOfservice = rankingIterator.next();
                 if(listOfservice == null) continue;
                 Iterator<Services> it = listOfservice.iterator();
                 while(it.hasNext()){

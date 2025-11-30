@@ -107,8 +107,8 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     }
 
     @Override
-    public Iterator<SortedList<Services>> getServicesByRankingIterator() throws NoServicesInSystemException{
-        Iterator<SortedList<Services>> rankingIterator = loadedArea.getServicesByRankingIterator();
+    public Iterator<TwoWayList<Services>> getServicesByRankingIterator() throws NoServicesInSystemException{
+        Iterator<TwoWayList<Services>> rankingIterator = loadedArea.getServicesByRankingIterator();
         if (!rankingIterator.hasNext()) {
             throw new NoServicesInSystemException();
         }

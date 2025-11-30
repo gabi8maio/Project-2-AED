@@ -18,7 +18,7 @@ public interface ServicesChange {
      * @param tag - the tags given to the service when the "star" command is used
      * @param counter - lastUpdatedOrder, variable used to sort the data structure used to keep the raking organised
      */
-    void addRating(int stars,String tag, int counter);
+    int addRating(int stars,String tag, int counter);
 
     /**
      * Adds the Student that is on this Service

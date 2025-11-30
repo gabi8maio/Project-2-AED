@@ -120,13 +120,17 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
         numOfServiceInsertion = counter;
     }
     @Override
-    public void addRating(int stars,String tag, int counter) {
+    public int addRating(int stars,String tag, int counter) {
         int oldAverage = averageStars;
         totalStars += stars;
         rating++;
         averageStars = (totalStars + rating / 2) / rating;
         int newAverage = averageStars;
-        if(oldAverage != newAverage) lastUpdateCounter = counter;
+        if(oldAverage != newAverage) {
+            lastUpdateCounter = counter;
+            return 1;
+        }
+        return -1;
     }
     @Override
     public int getAverageStars() {
