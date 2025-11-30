@@ -141,7 +141,7 @@ public class AreaClass implements Serializable, Area {
         for (int i = 0; i< studentsByInsertion.size(); i++){
             if(studentsByInsertion.get(i).getName().equalsIgnoreCase(studentName)) studentsByInsertion.remove(i);
         }
-        allStudents.remove(studentName); // Modificado
+        allStudents.remove(studentName.toUpperCase()); // Modificado
         TwoWayList<Students> studentsList = studentsByCountry.get(country.toUpperCase());
 
         Iterator<Students> it = studentsList.iterator();
@@ -162,8 +162,8 @@ public class AreaClass implements Serializable, Area {
         homeService.removeStudentsThere(student);
         homeService.removeStudentsThereLodging();
 
-        services.remove(servicesNow.getServiceName().toUpperCase()); // Services Updated
-        services.remove(homeService.getServiceName().toUpperCase()); // Services Updated
+        //services.remove(servicesNow.getServiceName().toUpperCase()); // Services Updated
+        //services.remove(homeService.getServiceName().toUpperCase()); // Services Updated
 
         services.put(servicesNow.getServiceName().toUpperCase(),servicesNow); // Services Updated
         services.put(homeService.getServiceName().toUpperCase(),homeService); // Services Updated
@@ -604,11 +604,11 @@ public class AreaClass implements Serializable, Area {
      */
     private Services findCheapestService(String serviceType) {
         Services cheapest = null;
-        Iterator<Map.Entry<String,Services>> it = services.iterator(); // Nodificdo
+        Iterator<Services> it = servicesByInsertion.iterator();
 
         while (it.hasNext()) {
-            Map.Entry<String,Services> serviceEntry = it.next();
-            Services service = serviceEntry.value();
+            Services service = it.next();
+
 
                 if (service.getServiceType().equalsIgnoreCase(serviceType)) {
                     if (cheapest == null || getPrice(service) < getPrice(cheapest)) {
@@ -627,10 +627,11 @@ public class AreaClass implements Serializable, Area {
      */
     private Services findBestRatedService(String serviceType) {
         Services bestRated = null;
-        Iterator<Map.Entry<String,Services>> it = services.iterator(); // Nodificdo
+        Iterator<Services> it = servicesByInsertion.iterator(); // Nodificdo
+
         while (it.hasNext()) {
-            Map.Entry<String,Services> serviceEntry = it.next();
-            Services service = serviceEntry.value();
+            Services service = it.next();
+
             if (service.getServiceType().equalsIgnoreCase(serviceType)) {
                 if (bestRated == null || service.getAverageStars() > bestRated.getAverageStars()) {
                     bestRated = service;
