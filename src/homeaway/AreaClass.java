@@ -289,37 +289,42 @@ public class AreaClass implements Serializable, Area {
         Services service = findServicesElem(serviceName);
         assert service != null;
 
-       if (service.addRating(rating, tag, updateCounter++) != -1){
-           // Remove service from current position
-           for (int i = 0; i < servicesByRank.size(); i++) {
-               TwoWayList<Services> list = servicesByRank.get(i);
-               if (list != null && list.indexOf(service) != -1) {
-                   list.remove(list.indexOf(service)); // Assuming SortedList has remove by element
-                   break;
-               }
-           }
+        int ratingResult = service.addRating(rating, tag, updateCounter++);
 
-           // Add to correct position based on new rating
-           int newIndex = 5 - service.getAverageStars();
+        TwoWayList<Services> targetList = null;
+        Services serviceToUpdate = service; // Default to the original service
 
+        if (ratingResult != -1) {
+            // Remove service from current position
+            for (int i = 0; i < servicesByRank.size(); i++) {
+                TwoWayList<Services> list = servicesByRank.get(i);
+                if (list != null && list.indexOf(service) != -1) {
+                    list.remove(list.indexOf(service));
+                    break;
+                }
+            }
+            // Add to correct position based on new rating
+            int newIndex = 5 - service.getAverageStars();
 
-           servicesByRank.get(newIndex).addLast(service);
-           TwoWayList<Services> list = servicesByRank.get(newIndex);
-           int index = list.indexOf(service);
-           updateTags(tag, list.get(index));
-       }
+            servicesByRank.get(newIndex).addLast(service);
+            targetList = servicesByRank.get(newIndex);
+
+            int newPosition = targetList.indexOf(service);
+            if (newPosition != -1)
+                serviceToUpdate = targetList.get(newPosition);
+        }
+        if (tag != null)
+            updateTags(tag, serviceToUpdate);
     }
 
     private void updateTags(String tag, Services newService) {
-        if (tag == null || tag.trim().isEmpty() || newService == null) {
-            return;
-        }
+        if (tag == null || tag.trim().isEmpty() || newService == null) return;
+
 
         String[] words = tag.split("[\\s,\\-_.;]+");
 
         for (String word : words) {
             String cleanWord = word.trim().toUpperCase();
-
 
                 SortedList<Services> servicesList = tags.get(cleanWord);
 
@@ -328,11 +333,9 @@ public class AreaClass implements Serializable, Area {
                     tags.put(cleanWord, servicesList);
                 }
 
-                // Check for duplicates using the list directly
-                if (!serviceExistsInList(servicesList, newService)) {
+                // check if already exists on the list
+                if (!serviceExistsInList(servicesList, newService))
                     servicesList.add(newService);
-                }
-
         }
     }
 
