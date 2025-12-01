@@ -380,8 +380,9 @@ public class AreaClass implements Serializable, Area {
             }*/
         if(tags == null) return null;
         if(tags.isEmpty()) return null;
+        if(tags.get(tag.toUpperCase()) == null) return null;
         SortedList<Services> list = tags.get(tag.toUpperCase());
-        System.out.print(tags.get("good"));
+        //System.out.print(tags.get("good"));
         return list.iterator();
     }
     @Override
