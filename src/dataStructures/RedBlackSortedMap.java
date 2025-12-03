@@ -26,7 +26,10 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
     @Override
     public V get(K key) {
         BTNode<Entry<K, V>> node = searchNode(key);
-        return (node == null) ? null : node.getElement().value();
+        if (node == null)
+            return null;
+        else
+            return node.getElement().value();
     }
 
     @Override
@@ -145,7 +148,12 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
         V removedValue = z.getElement().value();
 
         RBNode<Entry<K, V>> y = (RBNode<Entry<K, V>>) z;
-        boolean yOriginalRed = y.isRed();
+        boolean yWasRed = true;
+
+        if (y != null) {
+            yWasRed = y.isRed();
+        }
+
         BTNode<Entry<K, V>> x;
         BTNode<Entry<K, V>> xParent;
 
@@ -161,9 +169,12 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
             BTNode<Entry<K, V>> zRight = (BTNode<Entry<K, V>>) z.getRightChild();
             BTNode <Entry<K, V>> successor = zRight.furtherLeftElement();
             y = (RBNode<Entry<K, V>>) successor;
-            yOriginalRed = !y.isRed() ? false : false;
 
-            boolean yWasRed = y.isRed();
+
+            boolean yOriginalWasRed = true;
+            if (y != null) {
+                yOriginalWasRed = y.isRed();
+            }
 
             x = (BTNode<Entry<K, V>>) y.getRightChild();
 
@@ -188,7 +199,6 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
             }else {
                 y.setBlack();
             }
-            yOriginalRed = yWasRed;
 
             if (x == null){
                 if (y.getParent() != null)
@@ -197,7 +207,7 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
                 xParent = (BTNode<Entry<K, V>>) x.getParent();
             }
 
-            if (!yWasRed){
+            if (!yOriginalWasRed) {
                 deleteFixup (x, xParent);
             }
             currentSize--;
@@ -217,45 +227,42 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
 
     @SuppressWarnings("unchecked")
     private void deleteFixup(BTNode<Entry<K, V>> x, BTNode<Entry<K, V>> xParent) {
-        // Enquanto x não é a raiz e x é preto (null é considerado preto)
         while ((x != root) && (x == null || !((RBNode<Entry<K, V>>) x).isRed())) {
-            // Determinar se x é filho esquerdo ou direito do seu pai
-            if (xParent == null) break; // segurança
+
+            if (xParent == null) break;
+
             if (x == xParent.getLeftChild()) {
-                // w é sibling (irmão) de x
                 RBNode<Entry<K, V>> w = (RBNode<Entry<K, V>>) xParent.getRightChild();
-                // Caso 1: w é vermelho -> recolorir e rotacionar
                 if (w != null && w.isRed()) {
                     w.setBlack();
                     ((RBNode<Entry<K, V>>) xParent).setRed();
                     rotateLeft(xParent);
-                    // atualizar w após rotação
                     w = (RBNode<Entry<K, V>>) xParent.getRightChild();
                 }
-                // Agora w é preto
-                boolean wLeftBlack = !nodeIsRed(w != null ? w.getLeftChild() : null);
-                boolean wRightBlack = !nodeIsRed(w != null ? w.getRightChild() : null);
+
+                Node <Entry<K, V>> wLeft = null;
+                Node <Entry<K, V>> wRight = null;
+                if (w != null){
+                    wLeft = (Node<Entry<K, V>>) w.getLeftChild();
+                    wRight = (Node<Entry<K, V>>) w.getRightChild();
+                }
+                boolean wLeftBlack = !nodeIsRed(wLeft);
+                boolean wRightBlack = !nodeIsRed(wRight);
 
                 if (w == null) {
-                    // sibling nulo -> tratar como todos os seus filhos pretos: propaga "black" para cima
                     x = xParent;
                     xParent = (BTNode<Entry<K, V>>) x.getParent();
                 } else if (wLeftBlack && wRightBlack) {
-                    // Caso 2: w e seus filhos são pretos -> pintar w de vermelho e subir
                     w.setRed();
                     x = xParent;
                     xParent = (BTNode<Entry<K, V>>) x.getParent();
                 } else {
-                    // Caso 3 e 4: pelo menos um filho de w é vermelho
                     if (!nodeIsRed(w.getRightChild())) {
-                        // Caso 3: w.right é preto e w.left é vermelho -> rotacionar em w
                         if (w.getLeftChild() != null) setBlack(w.getLeftChild());
                         w.setRed();
                         rotateRight(w);
                         w = (RBNode<Entry<K, V>>) xParent.getRightChild();
                     }
-                    // Caso 4: w.right é vermelho -> recolorir e rotacionar em xParent
-                    // copiar cor de xParent para w
                     if (w != null) {
                         if (xParent instanceof RBNode) {
                             if (((RBNode<Entry<K, V>>) xParent).isRed()) setRed(w); else setBlack(w);
@@ -268,7 +275,6 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
                     xParent = null;
                 }
             } else {
-                // Simétrico: x é filho direito
                 RBNode<Entry<K, V>> w = (RBNode<Entry<K, V>>) xParent.getLeftChild();
                 if (w != null && w.isRed()) {
                     w.setBlack();
@@ -277,8 +283,16 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
                     w = (RBNode<Entry<K, V>>) xParent.getLeftChild();
                 }
 
-                boolean wLeftBlack = !nodeIsRed(w != null ? w.getLeftChild() : null);
-                boolean wRightBlack = !nodeIsRed(w != null ? w.getRightChild() : null);
+                Node <Entry<K, V>> wLeft = null;
+                Node <Entry<K, V>> wRight = null;
+
+                if (w != null) {
+                    wLeft = (Node<Entry<K, V>>) w.getLeftChild();
+                    wRight = (Node<Entry<K, V>>) w.getRightChild();
+                }
+
+                boolean wLeftBlack = !nodeIsRed(wLeft);
+                boolean wRightBlack = !nodeIsRed(wRight);
 
                 if (w == null) {
                     x = xParent;
@@ -307,7 +321,6 @@ public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTr
                 }
             }
         }
-        // Garantir que x (se não nulo) fica preto ao fim
         if (x != null) setBlack(x);
     }
 
