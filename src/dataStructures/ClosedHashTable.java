@@ -49,8 +49,14 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
      * @return the index of the table, where is the entry with the specified key, or null
      */
     int searchLinearProving(K key) {
-        //TODO: Left as an exercise.      
-        return NOT_FOUND; 
+        for (int i = 0; i < table.length; i++) {
+            int idx = hash(key, i);
+            if (table[idx].key().equals(key))
+                return idx;
+            if (table[idx] == null)
+                return NOT_FOUND;
+        }
+        return NOT_FOUND;
     }
 
     
@@ -64,10 +70,13 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
      */
     @Override
     public V get(K key) {
-        //TODO: Left as an exercise.
-        
-        return null;
+        int idx = searchLinearProving(key);
+        if (idx == NOT_FOUND)
+            return null;
+        else
+            return table[idx].value();
     }
+
 
     /**
      * If there is an entry in the dictionary whose key is the specified key,
@@ -83,12 +92,60 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
     public V put(K key, V value) {
         if (isFull())
             rehash();
-        //TODO: Left as an exercise.
+        for (int i = 0; i < table.length; i++) {
+            int idx = hash(key, i);
+            if (table[idx].key() == null) {
+                table[idx] = new Entry<>(key, value);
+                currentSize++;
+                return null;
+            }
+            if (table[idx].key().equals(key)) {
+                V oldValue = table[idx].value();
+                table[idx] = new Entry<>(key, value);
+                return oldValue;
+            }
+            if (table[idx] == REMOVED_CELL) {
+                for (int j = 0; j < table.length; j++) {
+                    int idxOfTheObj = hash(key, j);
+                    if (table[idxOfTheObj].key() == null) {
+                        table[idx] = new Entry<>(key, value);
+                        currentSize++;
+                        return null;
+                    }
+                    if (table[idxOfTheObj].key().equals(key)) {
+                        V oldValue = table[idxOfTheObj].value();
+                        table[idx] = new Entry<>(key, value);
+                        return oldValue;
+                    }
+                }
+                table[idx] = new Entry<>(key, value);
+                currentSize++;
+                return null;
+            }
+        }
         return null;
     }
 
+    @SuppressWarnings("unchecked")
      private void rehash(){
- //TODO: Left as an exercise.
+        int newSize = HashTable.nextPrime(table.length*2);
+        Entry<K,V>[] newTable = (Entry<K,V>[]) new Entry[newSize];
+        for (int i = 0; i < table.length; i++) {
+            if (table[i] == null){
+                boolean found = false;
+                int j= 0;
+                int idx;
+                do {
+                    idx = (table[i].key().hashCode() + j) % newSize;
+                    if (newTable[idx] == null) {
+                        newTable[idx] = table[i];
+                        found = true;
+                    }
+                    j++;
+                }while (!found);
+            }
+        }
+        table = newTable;
      }
 
    
@@ -101,11 +158,16 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
      * @return previous value associated with key,
      * or null if the dictionary does not an entry with that key
      */
+    @SuppressWarnings("unchecked")
     @Override
     public V remove(K key) {
-        //TODO: Left as an exercise.
-        
-        return null;
+        int idx = searchLinearProving(key);
+        if (idx == NOT_FOUND)
+            return null;
+        V oldValue = table[idx].value();
+        table[idx] = (Entry<K, V>) REMOVED_CELL;
+        currentSize--;
+        return oldValue;
     }
 
     /**
@@ -115,9 +177,7 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
      */
     @Override
     public Iterator<Entry<K, V>> iterator() {
-         //TODO: Left as an exercise.
-        
-        return null;
+         return new FilterIterator(new ArrayIterator(table, table.length-1), m -> m!= null && m!=REMOVED_CELL);
     }
 
 }
