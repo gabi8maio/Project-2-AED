@@ -46,7 +46,7 @@ public class AreaClass implements Serializable, Area {
         studentsByInsertion = new DoublyLinkedList<>();
         services = new SepChainHashTable<>();
         studentsByCountry = new SepChainHashTable<>();
-        allStudents = new AVLSortedMap<>();
+        allStudents = new RedBlackSortedMap<>();
         servicesByRank = new ListInArray<>(MAX_NUM_STARS);
         servicesByRank.add(0,new DoublyLinkedList<>());
         servicesByRank.add(1,new DoublyLinkedList<>());
