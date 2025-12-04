@@ -107,7 +107,7 @@ public class AreaClass implements Serializable, Area {
     @Override
     public void addStudent(String studentType, String name, String country, String lodging) {
 
-        if (StudentTypes.fromString(studentType) == null) {
+        if (StudentTypes.fromString(studentType) == null) {//..
             throw new InvalidStudentTypeException();
         }
         if (!lodgingExists(lodging)) {
