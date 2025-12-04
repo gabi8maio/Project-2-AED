@@ -117,13 +117,26 @@ public class SortedDoublyLinkedList<E> implements SortedList<E>, Serializable {
      * @return element in the list or null
      */
     public E get(E element) {
-        //TODO: Left as an exercise.
-        DoublyListNode<E> nextToCheck = head;
-        while(nextToCheck != null){
-            int cmp = comparator.compare(nextToCheck.getElement(), element);
-            if(cmp == 0) return nextToCheck.getElement();
-            if(cmp > 0) return null;
-            nextToCheck = nextToCheck.getNext();
+        if (currentSize == 0)
+            return null;
+
+        int cmpHead = comparator.compare(head.getElement(), element);
+        if (cmpHead > 0)
+            return null;
+        int cmpTail = comparator.compare(tail.getElement(), element);
+        if (cmpTail < 0)
+            return null;
+        if (cmpHead == 0)
+            return head.getElement();
+        if (cmpTail == 0)
+            return tail.getElement();
+
+        DoublyListNode<E> node = head;
+        while (node != null) {
+            int cmp = comparator.compare(node.getElement(), element);
+            if (cmp == 0) return node.getElement();
+            if (cmp>0) return null;
+            node = node.getNext();
         }
         return null;
     }
@@ -135,15 +148,7 @@ public class SortedDoublyLinkedList<E> implements SortedList<E>, Serializable {
      * @return true iff the element exists in the list.
      */
     public boolean contains(E element) {
-        //TODO: Left as an exercise.
-        DoublyListNode<E> current = head;
-        while (current != null) {
-            int cmp = comparator.compare(current.getElement(), element);
-            if (cmp == 0) return true;
-            else if (cmp > 0) return false;
-            current = current.getNext(); // < 0
-        }
-        return false;
+        return get(element) != null;
     }
 
     /**
