@@ -71,11 +71,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
 
     @Override
     public Iterator<Services> getServiceIterator() throws NoServicesYetException {
-
         return loadedArea.getServicesIterator();
-       /* Iterator<Map.Entry<String,Services>> servicesIterator = loadedArea.getServicesIterator();
-        if(!servicesIterator.hasNext()) throw new NoServicesYetException();
-        return loadedArea.getServicesIterator();*/
     }
 
     @Override
@@ -90,19 +86,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     @Override
     public Iterator<Services> getRankedServicesIterator(int stars,String type,String studentName)
             throws InvalidStarsException, StudentDoesNotExistsException, InvalidServiceTypeException, NoTypeServicesException, NoServicesWithAverage{
-        if (stars > 5 || stars < 1)
-            throw new InvalidStarsException();
-        String name = studentExists(studentName);
-        if (name == null)
-            throw new StudentDoesNotExistsException(studentName);
-        TypesOfService serviceTypeEnum = TypesOfService.fromString(type);
-        if (serviceTypeEnum == null) {
-            throw new InvalidServiceTypeException();
-        }
-        if (!hasServicesOfType(type))
-            throw new NoTypeServicesException(type);
-        if (!isTypeWithAverage(type, stars))
-            throw new NoServicesWithAverage(type);
+
         return loadedArea.getRankedServicesIterator(stars,type,studentName);
     }
 
@@ -239,15 +223,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
 
     @Override
     public  Services findMostRelevantService(String studentName, String serviceType) throws InvalidServiceTypeException, StudentDoesNotExistsException, NoTypeServicesException{
-        TypesOfService serviceTypeEnum = TypesOfService.fromString(serviceType);
-        if (serviceTypeEnum == null) {
-            throw new InvalidServiceTypeException();
-        }
-        String name = studentExists(studentName);
-        if (name == null)
-            throw new StudentDoesNotExistsException(studentName);
-        if (!hasServicesOfType(serviceType))
-            throw new NoTypeServicesException(serviceType);
+
         return loadedArea.findMostRelevantService(studentName, serviceType);
     }
 
@@ -285,26 +261,11 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
 
     @Override
     public TwoWayIterator<Students> usersCommand(String order, String serviceName) throws NoStudentsOnServiceException, ServiceDoesNotExistException, ServiceNotControlEntryExitException{
-        String service = serviceNameExists(serviceName);
-        if (service == null)
-            throw new ServiceDoesNotExistException(serviceName);
-        if (!isThereAnyStudent(serviceName)) {
-            throw new NoStudentsOnServiceException(service);
-        }
-        if (!isCorrectOrder(order)) {
-            throw new OrderNotExistsException();
-        }
-        if (!isEatingOrLodgingService(serviceName))
-            throw new ServiceNotControlEntryExitException(service);
-        return loadedArea.getStudentsByService(service);
+        return loadedArea.getStudentsByService(order,serviceName);
     }
 
     @Override
     public void starCommand(int rating,String serviceName,String tag) throws InvalidEvaluationException, ServiceDoesNotExistException{
-        if(rating < 1 || rating > 5)
-            throw new InvalidEvaluationException();
-        if(serviceNameExists(serviceName) == null)
-            throw  new ServiceDoesNotExistException(serviceName);
         loadedArea.starCommand(rating,serviceName,tag);
     }
 

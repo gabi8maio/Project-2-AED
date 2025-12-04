@@ -104,7 +104,7 @@ public interface Area extends Serializable {
      * @param serviceName - The name of the Service given
      * @return - returns an Iterator with the students that are on a certain service given
      */
-    TwoWayIterator<Students> getStudentsByService(String serviceName);
+    TwoWayIterator<Students> getStudentsByService(String order,String serviceName);
 
     /**
      * Method used to iterate the services ordered by the number of stars and the last updated service

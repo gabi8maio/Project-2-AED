@@ -6,7 +6,7 @@ package homeaway;
 import dataStructures.*;
 import dataStructures.exceptions.InvalidPositionException;
 import dataStructures.exceptions.NoSuchElementException;
-import homeaway.Exeptions.NoServicesYetException;
+import homeaway.Exeptions.*;
 
 import java.io.Serializable;
 
@@ -286,6 +286,13 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public void starCommand(int rating, String serviceName, String tag) {
+
+        //Throw
+        if(rating < 1 || rating > 5)
+            throw new InvalidEvaluationException();
+        if(serviceExists(serviceName) == null)
+            throw  new ServiceDoesNotExistException(serviceName);
+
         Services service = findServicesElem(serviceName);
         assert service != null;
 
@@ -390,6 +397,22 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Iterator<Services> getRankedServicesIterator (int stars,String type,String studentName){
+
+        //Throws
+        if (stars > 5 || stars < 1)
+            throw new InvalidStarsException();
+        String name = studentExists(studentName);
+        if (name == null)
+            throw new StudentDoesNotExistsException(studentName);
+        TypesOfService serviceTypeEnum = TypesOfService.fromString(type);
+        if (serviceTypeEnum == null) {
+            throw new InvalidServiceTypeException();
+        }
+        if (!hasServiceOfType(type))
+            throw new NoTypeServicesException(type);
+        if (!isTypeWithAverage(type, stars))
+            throw new NoServicesWithAverage(type);
+
         Students student = findStudentElem(studentName);
         assert student != null;
         Services studentLocation = student.getPlaceNow();
@@ -416,10 +439,23 @@ public class AreaClass implements Serializable, Area {
         return tempList.iterator();
     }
     @Override
-    public TwoWayIterator<Students> getStudentsByService(String serviceName){
-        Services service = findServicesElem(serviceName);
-        assert service != null;
-        return service.getStudentsThere();
+    public TwoWayIterator<Students> getStudentsByService(String order, String serviceName){
+
+        String service = serviceExists(serviceName);
+        if (service == null)
+            throw new ServiceDoesNotExistException(serviceName);
+        if (!isThereAnyStudents(serviceName)) {
+            throw new NoStudentsOnServiceException(service);
+        }
+        if (!isCorrectOrder(order)) {
+            throw new OrderNotExistsException();
+        }
+        if (!isEatingOrLodgingService(serviceName))
+            throw new ServiceNotControlEntryExitException(service);
+
+        Services serviceObj = findServicesElem(serviceName);
+        assert serviceObj != null;
+        return serviceObj.getStudentsThere();
 
     }
     @Override
@@ -570,6 +606,17 @@ public class AreaClass implements Serializable, Area {
 
     @Override
     public Services findMostRelevantService(String studentName, String serviceType){
+
+        //Throw
+        TypesOfService serviceTypeEnum = TypesOfService.fromString(serviceType);
+        if (serviceTypeEnum == null)
+            throw new InvalidServiceTypeException();
+        String name = studentExists(studentName);
+        if (name == null)
+            throw new StudentDoesNotExistsException(studentName);
+        if (!hasServiceOfType(serviceType))
+            throw new NoTypeServicesException(serviceType);
+
         Students student = findStudentElem(studentName);
         Services relevantService;
         assert student != null;
@@ -676,5 +723,9 @@ public class AreaClass implements Serializable, Area {
             price = ((Eating)service).getPrice();
         }
         return price;
+    }
+
+    private boolean isCorrectOrder(String order){
+        return order.equals(">") || order.equals("<");
     }
 }
