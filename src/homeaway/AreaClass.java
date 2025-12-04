@@ -106,6 +106,22 @@ public class AreaClass implements Serializable, Area {
 
     @Override
     public void addStudent(String studentType, String name, String country, String lodging) {
+
+        if (StudentTypes.fromString(studentType) == null) {
+            throw new InvalidStudentTypeException();
+        }
+        if (!lodgingExists(lodging)) {
+            throw new LodgingNotExistsException(lodging);
+        }
+        String fullLodging = isItFull(lodging);
+        if (fullLodging != null) {
+            throw new LodgingIsFullException(fullLodging);
+        }
+        String studentExistsName = studentExists(name);
+        if (studentExists(name) != null){
+            throw new StudentAlreadyExistsException(studentExistsName);
+        }
+
         Students newStudent = null;
         Services service = findServicesElem(lodging);
         StudentTypes type = StudentTypes.fromString(studentType);
@@ -130,10 +146,14 @@ public class AreaClass implements Serializable, Area {
 
     @Override
     public Students removeStudent(String studentName) {
-        Students student = findStudentElem(studentName);
+
+        String studentExistsName = studentExists(studentName);
+        if (studentExists(studentName) == null){
+            throw new StudentDoesNotExistsException(studentName);
+        }
+
+        Students student = findStudentElem(studentExistsName);
         String country = student.getCountry();
-        if(student == null)
-            throw new InvalidPositionException(); // Isto em principio n vai acontecer
         Services servicesNow = student.getPlaceNow();
         Services homeService = student.getPlaceHome();
 
@@ -184,7 +204,24 @@ public class AreaClass implements Serializable, Area {
     }
 
     @Override
-    public Students moveStudentToLocation(String studentName, String serviceName){
+    public Students moveStudentToLocation(String studentName, String locationName){
+
+        String serviceName = serviceExists(locationName);
+        if (serviceName == null)
+            throw new LodgingNotExistsException(locationName);
+        String studentNameReal = studentExists(studentName);
+        if (studentExists(studentName) == null){
+            throw new StudentDoesNotExistsException(studentName);
+        }
+        if (isStudentHome(studentName, serviceName))
+            throw new StudentHomeException(studentNameReal);
+        String fullLodging = isItFull(serviceName);
+        if (fullLodging != null) {
+            throw new LodgingIsFullException(fullLodging);
+        }
+        if (!isAcceptableMove(studentName, serviceName))
+            throw new MoveNotAcceptableException(studentNameReal);
+
         Students student = findStudentElem(studentName);
         Services service = findServicesElem(serviceName);
         assert service != null;
@@ -236,7 +273,22 @@ public class AreaClass implements Serializable, Area {
     }
 
     @Override
-    public Students goStudentToLocation(String studentName, String serviceName){
+    public Students goStudentToLocation(String studentName, String locationName){
+
+        String serviceName = serviceExists(locationName);
+        if (serviceName == null)
+            throw new UnknownLocationException(locationName);
+        String studentExistsName = studentExists(studentName);
+        if (studentExistsName == null){
+            throw new StudentDoesNotExistsException(studentName);
+        }
+        if (!isEatingOrLeisureService(locationName))
+            throw new InvalidServiceException(locationName);
+        if (isStudentAtLocation(studentName, locationName))
+            throw new StudentAlreadyThereException();
+        if (isEatingServiceFull(locationName))
+            throw new EatingIsFullException();
+
         Students student = findStudentElem(studentName);
         Services newService = findServicesElem(serviceName);
 
@@ -376,23 +428,12 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Iterator<Services> getServicesByTagIterator(String tag){
-       /* Iterator<Services> it = services.iterator();
-        DoublyLinkedList<Services> iteratorWithServices = new DoublyLinkedList<>();
-        while (it.hasNext()) {
-            Services s = it.next();
-            Iterator<String> it2 = s.getTags();
-            while (it2.hasNext()){
-                String tagService = it2.next();
-                if(tagService.toUpperCase().matches(".*\\b" + tag.toUpperCase() + "\\b.*")) {
-                    iteratorWithServices.addLast(s);
-                    break;
-                }
-            }*/
+
         if(tags == null) return null;
         if(tags.isEmpty()) return null;
         if(tags.get(tag.toUpperCase()) == null) return null;
         SortedList<Services> list = tags.get(tag.toUpperCase());
-        //System.out.print(tags.get("good"));
+
         return list.iterator();
     }
     @Override
@@ -464,6 +505,15 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Iterator<Services> getVisitedLocationsIterator(String studentName){
+
+        String name = studentExists(studentName);
+        if (name == null)
+            throw new StudentDoesNotExistsException(studentName);
+        if(isThrifty(studentName))
+            throw new StudentIsThriftyException(name);
+        if (!hasVisitedLocation(name))
+            throw new NoVisitedLocationsException(name);
+
         Students student = findStudentElem(studentName);
         if(student instanceof Outgoing outgoing) return outgoing.getAllVisitedServices();
         if(student instanceof Bookish bookish) return bookish.getAllVisitedServices();
@@ -601,6 +651,11 @@ public class AreaClass implements Serializable, Area {
     }
     @Override
     public Students getStudentLocationInfo(String studentName){
+
+        String studentExistsName = studentExists(studentName);
+        if (studentExistsName == null){
+            throw new StudentDoesNotExistsException(studentName);
+        }
        return allStudents.get(studentName.toUpperCase()); // Ignore case needs to be implemented
     }
 

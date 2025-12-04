@@ -101,13 +101,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
 
     @Override
     public Iterator<Services> getVisitedLocationsIterator(String studentName){
-        String name = studentExists(studentName);
-        if (name == null)
-            throw new StudentDoesNotExistsException(studentName);
-        if(isThrifty(studentName))
-            throw new StudentIsThriftyException(name);
-        if (!hasVisitedLocation(name))
-            throw new NoVisitedLocationsException(name);
+
         return loadedArea.getVisitedLocationsIterator(studentName);
     }
 
@@ -144,56 +138,24 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
 
     @Override
     public void addStudent (String studentType, String name, String country, String lodging) {
-        if (StudentTypes.fromString(studentType) == null) {
-            throw new InvalidStudentTypeException();
-        }
-        if (!lodgingExists(lodging)) {
-            throw new LodgingNotExistsException(lodging);
-        }
-        String fullLodging = lodgingIsFull(lodging);
-        if (fullLodging != null) {
-            throw new LodgingIsFullException(fullLodging);
-        }
-        String studentExistsName = studentExists(name);
-        if (studentExists(name) != null){
-            throw new StudentAlreadyExistsException(studentExistsName);
-        }
+
         loadedArea.addStudent(studentType, name, country, lodging);
     }
 
     @Override
     public Students getStudentLocationInfo(String studentName) throws StudentDoesNotExistsException {
-        String studentExistsName = studentExists(studentName);
-        if (studentExistsName == null){
-            throw new StudentDoesNotExistsException(studentName);
-        }
+
         return loadedArea.getStudentLocationInfo(studentName);
     }
 
     @Override
     public Students removeStudent(String studentName) throws StudentDoesNotExistsException{
-        String studentExistsName = studentExists(studentName);
-        if (studentExists(studentName) == null){
-            throw new StudentDoesNotExistsException(studentName);
-        }
-        return loadedArea.removeStudent(studentExistsName);
+
+        return loadedArea.removeStudent(studentName);
     }
 
     @Override
     public Students goStudentToLocation(String studentName, String locationName) throws UnknownLocationException, StudentDoesNotExistsException, InvalidServiceException, StudentAlreadyThereException, EatingIsFullException{
-        String serviceName = serviceNameExists(locationName);
-        if (serviceName == null)
-            throw new UnknownLocationException(locationName);
-        String studentExistsName = studentExists(studentName);
-        if (studentExistsName == null){
-            throw new StudentDoesNotExistsException(studentName);
-        }
-        if (!isEatingOrLeisureService(locationName))
-            throw new InvalidServiceException(locationName);
-        if (isStudentAtLocation(studentName, locationName))
-            throw new StudentAlreadyThereException();
-        if (isEatingServiceFull(locationName))
-            throw new EatingIsFullException();
 
         return loadedArea.goStudentToLocation(studentName,locationName);
     }
@@ -202,23 +164,7 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
     public Students moveStudentToLocation(String studentName, String locationName)
             throws LodgingNotExistsException, StudentDoesNotExistsException, StudentHomeException,LodgingIsFullException, MoveNotAcceptableException{
 
-        String serviceName = serviceNameExists(locationName);
-        if (serviceName == null)
-            throw new LodgingNotExistsException(locationName);
-        String studentNameReal = studentExists(studentName);
-        if (studentExists(studentName) == null){
-            throw new StudentDoesNotExistsException(studentName);
-        }
-        if (isStudentHome(studentName, serviceName))
-            throw new StudentHomeException(studentNameReal);
-        String fullLodging = lodgingIsFull(serviceName);
-        if (fullLodging != null) {
-            throw new LodgingIsFullException(fullLodging);
-        }
-        if (!isAcceptable(studentName, serviceName))
-            throw new MoveNotAcceptableException(studentNameReal);
-
-        return loadedArea.moveStudentToLocation(studentName,serviceName);
+        return loadedArea.moveStudentToLocation(studentName,locationName);
     }
 
     @Override
