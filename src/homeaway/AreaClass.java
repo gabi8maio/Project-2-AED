@@ -32,7 +32,7 @@ public class AreaClass implements Serializable, Area {
     private final int MAX_NUM_STARS = 5;
 
 
-    int updateCounter;
+    int updateCounter; //..
     int counterOfServicesInsertion;
 
     public AreaClass(String name, long topLatitude, long bottomLatitude, long leftLongitude, long rightLongitude){
