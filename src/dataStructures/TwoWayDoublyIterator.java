@@ -49,8 +49,9 @@ public class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      * @return the next element in the iteration
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
-    public E next( ){
-        //TODO: Left as an exercise.
+    public E next( ) throws NoSuchElementException {
+        if (!hasNext())
+            throw new NoSuchElementException();
         E element = nextToReturn.getElement();
         prevToReturn = nextToReturn;
         nextToReturn = nextToReturn.getNext();
@@ -62,8 +63,9 @@ public class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      * @return previous element in the iteration
      * @throws NoSuchElementException - if call is made without verifying pre-condition
      */
-    public E previous( ) {
-        //TODO: Left as an exercise.
+    public E previous( ) throws NoSuchElementException {
+        if(!hasPrevious())
+            throw new NoSuchElementException();
         E element = prevToReturn.getElement();
         nextToReturn = prevToReturn;
         prevToReturn = prevToReturn.getPrevious();

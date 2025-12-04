@@ -95,7 +95,7 @@ public class ListInArray<E> implements List<E> {
      */
     public E get(int position) {
         //TODO: Left as an exercise.
-        if(position < 0 || position >= elems.length) throw new InvalidPositionException();
+        if(position < 0 || position >= counter) throw new InvalidPositionException();
 
         return elems[position];
     }
@@ -152,8 +152,7 @@ public class ListInArray<E> implements List<E> {
 
             elems = newOne;
         }
-        elems[counter] = element;
-        counter++;
+        elems[counter++] = element;
     }
 
     /**
@@ -169,7 +168,7 @@ public class ListInArray<E> implements List<E> {
     @SuppressWarnings("unchecked")
     public void add(int position, E element) {
         //TODO: Left as an exercise.
-        if(position < 0 || position >  elems.length) throw new InvalidPositionException();
+        if(position < 0 || position >  counter) throw new InvalidPositionException();
         if(position == 0) {addFirst(element); return;}
         if (position == counter){ addLast(element); return;}
 
@@ -210,9 +209,8 @@ public class ListInArray<E> implements List<E> {
         //TODO: Left as an exercise.
         if(size() == 0) throw new NoSuchElementException();
 
-        E lastEle = elems[size() - 1];
-        elems[size() - 1] = null;
-        counter--;
+        E lastEle = elems[counter - 1];
+        elems[--counter] = null;
         return lastEle;
     }
 
@@ -228,7 +226,9 @@ public class ListInArray<E> implements List<E> {
      */
     public E remove(int position) {
         //TODO: Left as an exercise.
-        if(position < 0 || position >= dimension) throw new InvalidPositionException();
+        if(position < 0 || position >= counter) throw new InvalidPositionException();
+        if (position == 0){return removeFirst();}
+        if (position == counter-1) return removeLast();
         E removed = elems[position];
         for(int i = position; i < counter - 1; i++) elems[i] = elems[i + 1];
         elems[--counter] = null;
