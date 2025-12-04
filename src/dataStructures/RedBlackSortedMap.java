@@ -14,7 +14,7 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
      * @param value the new value
      * @return the old value if exists an entry with this Key, null otherwise
      */
-    public V insert(K key,V value) {
+    public V put(K key,V value) {
         if (isEmpty()) {
             root = new RBNode<>(new Map.Entry<>(key, value));
             ((RBNode<Entry<K,V>>) root).setBlack();
