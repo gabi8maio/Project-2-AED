@@ -100,7 +100,7 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
 
         RBNode<Entry<K,V>> node = (RBNode<Entry<K,V>>) getNode((RBNode<Entry<K,V>>)root, key);
 
-        if (node == null) return null;
+        if (key.compareTo(node.getElement().key()) != 0) return null;
         else {
             V oldValue = node.getElement().value();
             removeOptions(node);
