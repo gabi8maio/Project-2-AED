@@ -345,13 +345,6 @@ public class HomeAwaySystemClass implements HomeAwaySystem{
         return loadedArea.isTypeWithAverage(type, n);
     }
 
-    /**
-     * @param type - The type to check
-     * @return - returns true if there is a service with a certain type
-     */
-    private boolean hasServicesOfType(String type) {
-        return loadedArea.hasServiceOfType(type);
-    }
 
     /**
      *

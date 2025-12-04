@@ -23,6 +23,7 @@ public class AreaClass implements Serializable, Area {
 
 
     private final Map<String, Services> services;
+    private final TwoWayList<Services>[] servicesByType;
     private final TwoWayList<Services> servicesByInsertion;
     private final TwoWayList<Students>  studentsByInsertion;
     private final List<TwoWayList<Services>> servicesByRank;
@@ -30,9 +31,10 @@ public class AreaClass implements Serializable, Area {
     private final Map<String,TwoWayList<Students>> studentsByCountry;
     private final Map <String, SortedList<Services>> tags;
     private final int MAX_NUM_STARS = 5;
+    private final int NUMBEROFTYPES  = 3;
 
 
-    int updateCounter; //..
+    int updateCounter;
     int counterOfServicesInsertion;
 
     public AreaClass(String name, long topLatitude, long bottomLatitude, long leftLongitude, long rightLongitude){
@@ -48,6 +50,7 @@ public class AreaClass implements Serializable, Area {
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new RedBlackSortedMap<>();
         servicesByRank = new ListInArray<>(MAX_NUM_STARS);
+        servicesByType = (TwoWayList<Services>[]) new TwoWayList[NUMBEROFTYPES];
         servicesByRank.add(0,new DoublyLinkedList<>());
         servicesByRank.add(1,new DoublyLinkedList<>());
         servicesByRank.add(2,new DoublyLinkedList<>());
@@ -95,12 +98,6 @@ public class AreaClass implements Serializable, Area {
         if(!servicesByRank.isEmpty())
             servicesByRank.remove(1);
         servicesByRank.add(1,list); // 1 the second postion 5,4,3,2,1 stars
-
-
-      /* TwoWayList<Services> list = new DoublyLinkedList<>();
-        list.addLast(newService);
-        servicesByRank.add(1,list); // 1 the second postion 5,4,3,2,1 stars
-        // servicesByRank.add(serviceName,newService); // Modificado*/
 
     }
 
@@ -225,7 +222,7 @@ public class AreaClass implements Serializable, Area {
         Students student = findStudentElem(studentName);
         Services service = findServicesElem(serviceName);
         assert service != null;
-        assert student != null; // Deixamos?
+        assert student != null;
 
         if (student instanceof Outgoing outgoing)
             outgoing.addVisitedService(service);
