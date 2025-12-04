@@ -1,372 +1,191 @@
 package dataStructures;
 
-import dataStructures.exceptions.EmptyMapException;
+public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V>{
+    public RedBlackSortedMap(){
 
-public class RedBlackSortedMap <K extends Comparable<K>, V> extends AdvancedBSTree <K,V> {
-
-    public RedBlackSortedMap() {
-        super();
     }
 
-    private BTNode<Entry<K, V>> searchNode(K key) {
-        BTNode<Entry<K, V>> current = (BTNode<Entry<K, V>>) root;
-        while (current != null) {
-            int cmp = key.compareTo(current.getElement().key());
-            if (cmp == 0) {
-                return current;
-            } else if (cmp < 0)
-                current = (BTNode<Entry<K, V>>) current.getLeftChild();
-            else
-                current = (BTNode<Entry<K, V>>) current.getRightChild();
-        }
-        return null;
-    }
-
-
-    @Override
-    public V get(K key) {
-        BTNode<Entry<K, V>> node = searchNode(key);
-        if (node == null)
-            return null;
-        else
-            return node.getElement().value();
-    }
-
-    @Override
-    public V put (K key, V value) {
-        if (root == null){
+    /**
+     * If exists an entry with this Key, update the node with new element
+     * and return the old value of the entry
+     * otherwise, insert the newNode, "rebalance" or “recoloring” from the insertion position
+     * and return value
+     * @param key the key
+     * @param value the new value
+     * @return the old value if exists an entry with this Key, null otherwise
+     */
+    public V insert(K key,V value) {
+        if (isEmpty()) {
             root = new RBNode<>(new Map.Entry<>(key, value));
-            ((RBNode<Entry<K, V>>) root).setBlack();
+            ((RBNode<Entry<K,V>>) root).setBlack();
             currentSize++;
             return null;
         }
-        BTNode<Entry<K, V>> parent = null;
-        BTNode<Entry<K, V>> current = (BTNode<Entry<K, V>>) root;
-        int cmp = 0;
-        while (current != null) {
-            cmp = key.compareTo(current.getElement().key());
-            if (cmp == 0) {
-                V old = current.getElement().value();
-                current.setElement(new Map.Entry<>(key, value));
-                return old;
-            }
-            parent = current;
-            if (cmp<0)
-                current = (BTNode<Entry<K, V>>) current.getLeftChild();
-            else
-                current = (BTNode<Entry<K, V>>) current.getRightChild();
-
-        }
-        RBNode<Entry<K, V>> z = new RBNode<>(new Map.Entry<>(key, value));
-        z.setParent(parent);
-        if (cmp < 0)
-            parent.setLeftChild(z);
-        else
-            parent.setRightChild(z);
-        currentSize++;
-        insertFixup(z);
-        return null;
+        return findInsert((RBNode<Entry<K,V>>) root, key, value);
     }
 
-    @SuppressWarnings("unchecked")
-    private void insertFixup(RBNode<Entry<K, V>> z) {
-        // Enquanto existir pai e o pai for vermelho -> violação de RB
-        while (true) {
-            Node<Entry<K, V>> pNode = z.getParent();
-            if (pNode == null) break; // z chegou à raiz
-            RBNode<Entry<K, V>> parent = (RBNode<Entry<K, V>>) pNode;
-            if (parent.isBlack()) break; // sem violação se o pai for preto
 
-            // parent é vermelho -> existe grandparent (porque root é sempre preto)
-            RBNode<Entry<K, V>> grand = (RBNode<Entry<K, V>>) parent.getParent();
-            if (grand == null) {
-                // Improvável: pai vermelho sem avô (apenas se a árvore tiver raiz vermelha, mas root deve ser preta)
-                break;
-            }
-
-            // Determinar quem é o tio (uncle) de z
-            RBNode<Entry<K, V>> uncle;
-            boolean parentIsLeft = (grand.getLeftChild() == parent);
-
-            if (parentIsLeft) {
-                uncle = (RBNode<Entry<K, V>>) grand.getRightChild();
-                // Caso 1: tio é vermelho -> recolorir pai e tio para preto, avô para vermelho
-                if (uncle != null && uncle.isRed()) {
-                    parent.setBlack();
-                    uncle.setBlack();
-                    grand.setRed();
-                    z = grand; // subir e continuar a verificar violações acima
-                    continue;
-                }
-                // Caso 2/3: tio é preto ou nulo
-                // Se z é filho direito, fazemos rotateLeft(parent) para transformar no caso "externo"
-                if (z == parent.getRightChild()) {
-                    z = parent;
-                    // rotateLeft espera um BTNode (AdvancedBSTree fornece a implementação)
-                    rotateLeft((BTNode<Entry<K, V>>) z);
-                    parent = (RBNode<Entry<K, V>>) z.getParent();
-                    grand = (RBNode<Entry<K, V>>) parent.getParent();
-                }
-                // Agora z é filho esquerdo do seu pai (caso externo). Fazemos rotateRight(grand)
-                parent.setBlack();
-                grand.setRed();
-                rotateRight((BTNode<Entry<K, V>>) grand);
-            } else {
-                // parent é filho direito do grand
-                uncle = (RBNode<Entry<K, V>>) grand.getLeftChild();
-                if (uncle != null && uncle.isRed()) {
-                    // Caso 1 simétrico
-                    parent.setBlack();
-                    uncle.setBlack();
-                    grand.setRed();
-                    z = grand;
-                    continue;
-                }
-                // Caso 2/3 simétrico: se z é filho esquerdo, rotateRight(parent) para transformar
-                if (z == parent.getLeftChild()) {
-                    z = parent;
-                    rotateRight((BTNode<Entry<K, V>>) z);
-                    parent = (RBNode<Entry<K, V>>) z.getParent();
-                    grand = (RBNode<Entry<K, V>>) parent.getParent();
-                }
-                // rotateLeft(grand)
-                parent.setBlack();
-                grand.setRed();
-                rotateLeft((BTNode<Entry<K, V>>) grand);
-            }
+    private V findInsert(RBNode<Entry<K, V>> node, K key, V value) {
+        int compare = key.compareTo(node.getElement().key());
+        if (compare == 0) {
+            V oldValue = node.getElement().value();
+            node.setElement(new Entry<>(key, value));
+            return oldValue;
         }
-        // Garantir a raiz preta
-        if (root != null)
-            ((RBNode<Entry<K, V>>) root).setBlack();
+        if (compare < 0) {
+            if (node.getLeftChild() == null) {
+                RBNode<Entry<K, V>> newNode = new RBNode<>(new Entry<>(key, value), node);
+                node.setLeftChild(newNode);
+                currentSize++;
+                rebalance(newNode);
+                return null;
+            }
+            else return findInsert((RBNode<Entry<K, V>>) node.getLeftChild(), key, value);
+        }
+        else { // compare > 0
+            if (node.getRightChild() == null) {
+                RBNode<Entry<K,V>> newNode = new RBNode<>(new Entry<>(key, value), node);
+                node.setRightChild(newNode);
+                currentSize++;
+                rebalance(newNode);
+                return null;
+            }
+            else return findInsert((RBNode<Entry<K, V>>) node.getRightChild(), key, value);
+        }
     }
 
-    @Override
-    public V remove (K key) {
-        BTNode<Entry<K, V>> z = searchNode(key);
-        if (z == null) return null;
+    private void rebalance(RBNode<Entry<K,V>> newNode) {
+        RBNode<Entry<K,V>> parent = (RBNode<Entry<K, V>>) newNode.getParent();
+        RBNode<Entry<K,V>> grandParent = (RBNode<Entry<K, V>>) parent.getParent();
 
-        V removedValue = z.getElement().value();
-
-        RBNode<Entry<K, V>> y = (RBNode<Entry<K, V>>) z;
-        boolean yWasRed = true;
-
-        if (y != null) {
-            yWasRed = y.isRed();
+        if (!parent.isBlack()) {
+            RBNode<Entry<K,V>> uncle = getUncle(parent,  grandParent);
+            if (uncle != null && !uncle.isBlack()) {
+                parent.setBlack();
+                uncle.setBlack();
+                if (root == grandParent) {
+                    grandParent.setBlack();
+                }
+                else {
+                    grandParent.setRed();
+                    rebalance(grandParent);
+                }
+            }
+            else {
+                grandParent.setRed();
+                RBNode<Entry<K,V>> newRoot = (RBNode<Entry<K, V>>) restructure(newNode);
+                newRoot.setBlack();
+            }
         }
+    }
 
-        BTNode<Entry<K, V>> x;
-        BTNode<Entry<K, V>> xParent;
+    private RBNode<Entry<K,V>> getUncle(RBNode<Entry<K,V>> parent, RBNode<Entry<K,V>> grandParent) {
+        RBNode<Entry<K,V>> uncle;
 
-        if (z.getLeftChild() == null) {
-            x = (BTNode<Entry<K, V>>) z.getRightChild();
-            xParent = (BTNode<Entry<K, V>>) z.getParent();
-            transplant((BTNode<Entry<K, V>>) z, (BTNode<Entry<K, V>>) z.getRightChild());
-        }else if (z.getRightChild() == null) {
-            x = (BTNode<Entry<K, V>>) z.getLeftChild();
-            xParent = (BTNode<Entry<K, V>>) z.getParent();
-            transplant((BTNode<Entry<K, V>>) z, (BTNode <Entry<K, V>>) z.getLeftChild());
+        if (grandParent.getLeftChild() == parent) {
+            uncle = (RBNode<Entry<K, V>>) grandParent.getRightChild();
         } else {
-            BTNode<Entry<K, V>> zRight = (BTNode<Entry<K, V>>) z.getRightChild();
-            BTNode <Entry<K, V>> successor = zRight.furtherLeftElement();
-            y = (RBNode<Entry<K, V>>) successor;
+            uncle  = (RBNode<Entry<K,V>>) grandParent.getLeftChild();
+        }
+        return uncle;
+    }
 
+    /**
+     *
+     * @param key whose entry is to be removed from the map
+     * @return the old value, null if there wasn't an element with that key
+     */
+    public V remove(K key) {
+        if (isEmpty()) return null;
 
-            boolean yOriginalWasRed = true;
-            if (y != null) {
-                yOriginalWasRed = y.isRed();
-            }
+        RBNode<Entry<K,V>> node = (RBNode<Entry<K,V>>) getNode((RBNode<Entry<K,V>>)root, key);
 
-            x = (BTNode<Entry<K, V>>) y.getRightChild();
-
-            if (y.getParent() == z){
-                xParent = y;
-                if (x!=null) x.setParent(y);
-            } else {
-                xParent = (BTNode<Entry<K, V>>) y.getParent();
-                transplant ((BTNode<Entry<K, V>>) y, (BTNode<Entry<K, V>>) y.getRightChild());
-                y.setRightChild(z.getRightChild());
-                if (y.getRightChild() != null) ((BTNode<Entry<K,V>>) y.getRightChild()).setParent(y);
-            }
-            transplant((BTNode<Entry<K, V>>) z, (BTNode<Entry<K, V>>) y);
-            y.setLeftChild(z.getLeftChild());
-            if (y.getLeftChild() != null) ((BTNode<Entry<K, V>> )y.getLeftChild()).setParent(y);
-
-            if (z instanceof RBNode){
-                if (((RBNode<Entry<K, V>>)z).isRed())
-                    y.setRed();
-                else
-                    y.setBlack();
-            }else {
-                y.setBlack();
-            }
-
-            if (x == null){
-                if (y.getParent() != null)
-                    xParent = (BTNode<Entry<K, V>>) y.getParent();
-            } else {
-                xParent = (BTNode<Entry<K, V>>) x.getParent();
-            }
-
-            if (!yOriginalWasRed) {
-                deleteFixup (x, xParent);
-            }
+        if (node == null) return null;
+        else {
+            V oldValue = node.getElement().value();
+            removeOptions(node);
             currentSize--;
-            return removedValue;
+            return oldValue;
         }
-
-        boolean removedNodeWasRed = true;
-        if (z instanceof RBNode){
-            removedNodeWasRed = ((RBNode<Entry<K, V>>) z).isRed();
-        }
-        if (!removedNodeWasRed){
-            deleteFixup(x, xParent);
-        }
-        currentSize--;
-        return removedValue;
     }
 
-    @SuppressWarnings("unchecked")
-    private void deleteFixup(BTNode<Entry<K, V>> x, BTNode<Entry<K, V>> xParent) {
-        while ((x != root) && (x == null || !((RBNode<Entry<K, V>>) x).isRed())) {
+    private void removeOptions(RBNode<Entry<K,V>> node) {
+        RBNode<Entry<K,V>> parent = (RBNode<Entry<K,V>>) node.getParent();
+        if (node.isLeaf()) {
+            removeNode(parent, node, null);
+        }
+        else if (node.getRightChild()==null) {
+            removeNode(parent, node, (RBNode<Entry<K,V>>) node.getLeftChild());
+        }
+        else if (node.getLeftChild()==null) {
+            removeNode(parent, node, (RBNode<Entry<K,V>>) node.getRightChild());
+        }
+        else {
+            RBNode<Entry<K,V>> nodeToRemove = (RBNode<Entry<K,V>>)((RBNode<Entry<K,V>>) node.getLeftChild()).furtherRightElement();
+            node.setElement(nodeToRemove.getElement());
+            removeOptions(nodeToRemove); //porque ou é leaf ou so tem leftchild
+        }
+    }
 
-            if (xParent == null) break;
-
-            if (x == xParent.getLeftChild()) {
-                RBNode<Entry<K, V>> w = (RBNode<Entry<K, V>>) xParent.getRightChild();
-                if (w != null && w.isRed()) {
-                    w.setBlack();
-                    ((RBNode<Entry<K, V>>) xParent).setRed();
-                    rotateLeft(xParent);
-                    w = (RBNode<Entry<K, V>>) xParent.getRightChild();
-                }
-
-                Node <Entry<K, V>> wLeft = null;
-                Node <Entry<K, V>> wRight = null;
-                if (w != null){
-                    wLeft = (Node<Entry<K, V>>) w.getLeftChild();
-                    wRight = (Node<Entry<K, V>>) w.getRightChild();
-                }
-                boolean wLeftBlack = !nodeIsRed(wLeft);
-                boolean wRightBlack = !nodeIsRed(wRight);
-
-                if (w == null) {
-                    x = xParent;
-                    xParent = (BTNode<Entry<K, V>>) x.getParent();
-                } else if (wLeftBlack && wRightBlack) {
-                    w.setRed();
-                    x = xParent;
-                    xParent = (BTNode<Entry<K, V>>) x.getParent();
-                } else {
-                    if (!nodeIsRed(w.getRightChild())) {
-                        if (w.getLeftChild() != null) setBlack(w.getLeftChild());
-                        w.setRed();
-                        rotateRight(w);
-                        w = (RBNode<Entry<K, V>>) xParent.getRightChild();
-                    }
-                    if (w != null) {
-                        if (xParent instanceof RBNode) {
-                            if (((RBNode<Entry<K, V>>) xParent).isRed()) setRed(w); else setBlack(w);
-                        }
-                        ((RBNode<Entry<K, V>>) xParent).setBlack();
-                        if (w.getRightChild() != null) setBlack(w.getRightChild());
-                    }
-                    rotateLeft(xParent);
-                    x = (BTNode<Entry<K, V>>) root;
-                    xParent = null;
-                }
-            } else {
-                RBNode<Entry<K, V>> w = (RBNode<Entry<K, V>>) xParent.getLeftChild();
-                if (w != null && w.isRed()) {
-                    w.setBlack();
-                    ((RBNode<Entry<K, V>>) xParent).setRed();
-                    rotateRight(xParent);
-                    w = (RBNode<Entry<K, V>>) xParent.getLeftChild();
-                }
-
-                Node <Entry<K, V>> wLeft = null;
-                Node <Entry<K, V>> wRight = null;
-
-                if (w != null) {
-                    wLeft = (Node<Entry<K, V>>) w.getLeftChild();
-                    wRight = (Node<Entry<K, V>>) w.getRightChild();
-                }
-
-                boolean wLeftBlack = !nodeIsRed(wLeft);
-                boolean wRightBlack = !nodeIsRed(wRight);
-
-                if (w == null) {
-                    x = xParent;
-                    xParent = (BTNode<Entry<K, V>>) x.getParent();
-                } else if (wLeftBlack && wRightBlack) {
-                    w.setRed();
-                    x = xParent;
-                    xParent = (BTNode<Entry<K, V>>) x.getParent();
-                } else {
-                    if (!nodeIsRed(w.getLeftChild())) {
-                        if (w.getRightChild() != null) setBlack(w.getRightChild());
-                        w.setRed();
-                        rotateLeft(w);
-                        w = (RBNode<Entry<K, V>>) xParent.getLeftChild();
-                    }
-                    if (w != null) {
-                        if (xParent instanceof RBNode) {
-                            if (((RBNode<Entry<K, V>>) xParent).isRed()) setRed(w); else setBlack(w);
-                        }
-                        ((RBNode<Entry<K, V>>) xParent).setBlack();
-                        if (w.getLeftChild() != null) setBlack(w.getLeftChild());
-                    }
-                    rotateRight(xParent);
-                    x = (BTNode<Entry<K, V>>) root;
-                    xParent = null;
-                }
+    private void removeNode(RBNode<Entry<K,V>> parent, RBNode<Entry<K,V>> remNode, RBNode<Entry<K,V>> newChild) {
+        if (parent == null) {
+            root = newChild;
+        } else if (parent.getRightChild() == remNode) {
+            parent.setRightChild(newChild);
+        } else {
+            parent.setLeftChild(newChild);
+        }
+        if (newChild != null) {
+            newChild.setParent(parent);
+            if (parent != null){
+                rebalance(newChild);
             }
         }
-        if (x != null) setBlack(x);
-    }
 
-    private void transplant(BTNode<Entry<K, V>> u, BTNode<Entry<K, V>> v) {
-        BTNode<Entry<K, V>> parent = (BTNode<Entry<K, V>>) u.getParent();
-        if (parent == null) {
-            root = v;
-        } else if (parent.getLeftChild() == u) {
-            parent.setLeftChild(v);
-        } else {
-            parent.setRightChild(v);
-        }
-        if (v != null) {
-            v.setParent(parent);
+        if (remNode.isBlack()) {
+            if (newChild == null)
+                doubleBlack(parent, remNode);
+            else if (!newChild.isBlack())
+                newChild.setBlack();
         }
     }
 
-    private boolean nodeIsRed(Node<Entry<K, V>> n){
-        if ( n == null) return false;
-        return ((RBNode<Entry<K, V>>) n).isRed();
+    private void doubleBlack(RBNode<Entry<K,V>> parent, RBNode<Entry<K,V>> remNode) {
+        RBNode<Entry<K,V>> sibling = getUncle(remNode, parent);
+
+        if (sibling != null && sibling.isBlack()) { // black sibling
+            RBNode<Entry<K,V>> redChild = null;
+
+            if (sibling.getLeftChild() != null) { // red left child
+                redChild = (RBNode<Entry<K, V>>) sibling.getLeftChild();
+            }
+            else if (sibling.getRightChild() != null) { // red right child
+                redChild = (RBNode<Entry<K, V>>) sibling.getRightChild();
+            }
+            else { // no child or black child
+                if (!parent.isBlack()) { // red parent
+                    parent.setBlack();
+                    sibling.setRed();
+                }
+                else { // black parent
+                    sibling.setRed();
+                    RBNode<Entry<K,V>> newParent = (RBNode<Entry<K, V>>) parent.getParent();
+                    if (newParent == null)
+                        parent.setBlack(); // reached root
+                    else doubleBlack(newParent, parent);
+                }
+            }
+            if (redChild != null) handleRedChild(parent, redChild);
+
+        }
     }
 
-    private void setBlack (Node<Entry<K, V>> n){
-        if (n == null) return;
-        ((RBNode<Entry<K, V>>) n).setBlack();
+    private void handleRedChild(RBNode<Entry<K, V>> parent, RBNode<Entry<K, V>> redChild) {
+        redChild.setBlack();
+        RBNode<Entry<K,V>> newRoot = (RBNode<Entry<K, V>>) restructure(redChild);
+
+        if (parent.isBlack()) {
+            newRoot.setBlack();
+        } else newRoot.setRed();
     }
-
-    private void setRed (Node<Entry<K, V>> n){
-        if (n == null) return;
-        ((RBNode<Entry<K, V>>) n).setRed();
-    }
-
-    @Override
-    public Entry<K, V> minEntry() {
-        if (isEmpty())
-            throw new EmptyMapException();
-        return furtherLeftElement().getElement();
-    }
-
-    @Override
-    public Entry<K, V> maxEntry() {
-        if (isEmpty())
-            throw new EmptyMapException();
-        return furtherRightElement().getElement();
-    }
-
-
 }
-

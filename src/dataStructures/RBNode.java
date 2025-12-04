@@ -1,31 +1,28 @@
 package dataStructures;
 
-class RBNode<E> extends BTNode<E> {
-    private boolean red;
+public class RBNode<E> extends BTNode<E> {
 
-    public RBNode(E elem){
+    private boolean isRed;
+
+    RBNode(E elem) {
         super(elem);
-        this.red = true;
+        isRed = true;
     }
 
-    public RBNode (E elem, RBNode<E> parent){
+    RBNode(E elem, RBNode<E> parent) {
         super(elem, parent);
-        this.red = true;
+        isRed = true;
     }
 
-    public boolean isRed() {
-        return red;
+    public void setBlack() {
+        isRed = false;
+    }
+
+    public void setRed() {
+        isRed = true;
     }
 
     public boolean isBlack() {
-        return !red;
-    }
-
-    public void setRed(){
-        red = true;
-    }
-
-    public void setBlack(){
-        red = false;
+        return !isRed;
     }
 }
