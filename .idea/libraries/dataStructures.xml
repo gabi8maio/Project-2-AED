@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dataStructures">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/dataStructures.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
