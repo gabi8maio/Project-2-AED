@@ -25,10 +25,20 @@ class AVLNode<E> extends BTNode<E> {
         height= 0;
     }
 
+    /**
+     * The height of the node
+     * @param no the node
+     * @return the height
+     */
     private int height(AVLNode<E> no) {
         if (no==null)	return -1;
         return no.getHeight();
     }
+
+    /**
+     * Gives the height of the nodes
+     * @return the height
+     */
     public int getHeight() {
         return height;
     }
@@ -53,6 +63,9 @@ class AVLNode<E> extends BTNode<E> {
 // others public methods
 //TODO: Left as an exercise.
 
+    /**
+     * Updates the height of the node
+     */
     void updateHeight() {
         // Calcula a altura baseada nos filhos:
         // Altura = 1 + máxima altura entre os filhos
@@ -61,6 +74,10 @@ class AVLNode<E> extends BTNode<E> {
         height = 1 + Math.max(leftHeight, rightHeight);
     }
 
+    /**
+     * Gets the balance factor
+     * @return the factor
+     */
     public int getBalanceFactor() {
         // FATOR DE BALANCEAMENTO = altura(esquerda) - altura(direita)
         // Positivo: mais pesado à esquerda

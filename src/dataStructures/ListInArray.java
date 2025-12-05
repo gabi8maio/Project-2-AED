@@ -66,7 +66,6 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getFirst() {
-        //TODO: Left as an exercise.
         if(size() == 0) throw new NoSuchElementException();
         return elems[0];
     }
@@ -78,7 +77,6 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getLast() {
-        //TODO: Left as an exercise.
         if(size() == 0) throw new NoSuchElementException();
         return elems[counter - 1];
     }
@@ -94,7 +92,6 @@ public class ListInArray<E> implements List<E> {
      * @throws InvalidPositionException if position is not valid in the list
      */
     public E get(int position) {
-        //TODO: Left as an exercise.
         if(position < 0 || position >= counter) throw new InvalidPositionException();
 
         return elems[position];
@@ -109,7 +106,6 @@ public class ListInArray<E> implements List<E> {
      * @return position of the first occurrence of the element in the list (or -1)
      */
     public int indexOf(E element) {
-        //TODO: Left as an exercise.
         for(int i = 0; i < counter; i++){
             if(elems[i].equals(element)) return i;
         }
@@ -123,8 +119,6 @@ public class ListInArray<E> implements List<E> {
      */
     @SuppressWarnings("unchecked")
     public void addFirst(E element) {
-        //TODO: Left as an exercise.
-
         if(size() == elems.length){
             E[] newOne = (E[]) new Object[elems.length * 2];
             for (int i = 0; i < counter; i++) newOne[i] = elems[i];
@@ -145,7 +139,6 @@ public class ListInArray<E> implements List<E> {
      */
     @SuppressWarnings("unchecked")
     public void addLast(E element) {
-        //TODO: Left as an exercise.
         if(size() == elems.length){
             E[] newOne = (E[]) new Object[elems.length * 2];
             for (int i = 0; i < counter; i++) newOne[i] = elems[i];
@@ -167,7 +160,6 @@ public class ListInArray<E> implements List<E> {
      */
     @SuppressWarnings("unchecked")
     public void add(int position, E element) {
-        //TODO: Left as an exercise.
         if(position < 0 || position >  counter) throw new InvalidPositionException();
         if(position == 0) {addFirst(element); return;}
         if (position == counter){ addLast(element); return;}
@@ -190,7 +182,6 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E removeFirst() {
-        //TODO: Left as an exercise.
         if(size() == 0) throw new NoSuchElementException();
 
         E removed = elems[0];
@@ -206,7 +197,6 @@ public class ListInArray<E> implements List<E> {
      * @throws NoSuchElementException - if size() == 0
      */
     public E removeLast() {
-        //TODO: Left as an exercise.
         if(size() == 0) throw new NoSuchElementException();
 
         E lastEle = elems[counter - 1];
@@ -225,7 +215,6 @@ public class ListInArray<E> implements List<E> {
      * @throws InvalidPositionException - if position is not valid in the list
      */
     public E remove(int position) {
-        //TODO: Left as an exercise.
         if(position < 0 || position >= counter) throw new InvalidPositionException();
         if (position == 0){return removeFirst();}
         if (position == counter-1) return removeLast();

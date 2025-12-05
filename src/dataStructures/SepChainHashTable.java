@@ -79,7 +79,9 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
         return table[index].put(key, value);
     }
 
-
+    /**
+     * Handles the rehashing of the keys when the table grows
+     */
     private void rehash() {
         Map<K,V>[] oldTable = table;
         int newSize = nextPrime( oldTable.length * 2 );

@@ -39,7 +39,13 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
     }
 
     //Methods for handling collisions.
-    // Returns the hash value of the specified key.
+
+    /**
+     * Returns the hash value of the specified key
+     * @param key the key
+     * @param i the position in the table
+     * @return the hash code
+     */
     int hash( K key, int i ){
         return Math.abs( key.hashCode() + i) % table.length;
     }
@@ -126,6 +132,9 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
         return null;
     }
 
+    /**
+     * Handles the rehashing process when the table has grown
+     */
     @SuppressWarnings("unchecked")
      private void rehash(){
         int newSize = HashTable.nextPrime(table.length*2);

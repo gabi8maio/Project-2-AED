@@ -59,6 +59,12 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
         return null;
     }
 
+    /**
+     * Gets the node with the given key, starting in the given node
+     * @param node the node from where the search will start
+     * @param key the key of the node being searched
+     * @return the node if there is a node with the same key, null else
+     */
     protected BTNode<Entry<K,V>> getNode(BTNode<Entry<K,V>> node, K key) {
         if (node == null)
             return null;
@@ -94,6 +100,13 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
         return findInsert((BTNode<Entry<K, V>>) root, key, value);
     }
 
+    /**
+     * Finds the place where the new node is to be inserted
+     * @param node the node from where the search will be started
+     * @param key the key of the new node
+     * @param value the value of the new node
+     * @return the old value of the node (in case of already having a node with the given key)
+     */
     private V findInsert(BTNode<Entry<K,V>> node, K key, V value) {
         int compare = key.compareTo(node.getElement().key());
         if (compare == 0) {
@@ -146,6 +159,12 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
         }
     }
 
+    /**
+     * Replaces the child by the new child
+     * @param parent the parent
+     * @param child the previous child
+     * @param newChild the new child
+     */
     private void replaceChild(BTNode<Entry<K, V>> parent, BTNode<Entry<K, V>> child, BTNode<Entry<K, V>> newChild) {
         if (parent == null) {
             root = newChild;
@@ -159,6 +178,10 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
             newChild.setParent(parent);
     }
 
+    /**
+     * Recursive method to handle the remove
+     * @param node being removed
+     */
     private void recursiveRemove(BTNode<Entry<K, V>> node) {
         BTNode<Entry<K, V>> parent = (BTNode<Entry<K, V>>) node.getParent();
         if (node.isLeaf())

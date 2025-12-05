@@ -51,28 +51,28 @@ class BTNode<E> implements Node<E> {
 
     /**
      *  Returns the element of the node
-     * @return
+     * @return the element
      */
     public E getElement() {
         return element;
     }
     /**
      * Returns the left son of node
-     * @return
+     * @return the node of the left child
      */
     public Node<E> getLeftChild(){
         return leftChild;
     }
     /**
      * Returns the right son of node
-     * @return
+     * @return the node of the right child
      */
     public Node<E> getRightChild(){
         return rightChild;
     }
     /**
      * Returns the parent of node
-     * @return
+     * @return the node of the parent
      */
     public Node<E> getParent(){
         return parent;
@@ -80,7 +80,7 @@ class BTNode<E> implements Node<E> {
 
     /**
      * Returns true if node n does not have any children.
-     * @return
+     * @return true if is leaf (if does not have any child)
      */
     boolean isLeaf() {
         return getLeftChild()== null && getRightChild()==null;
@@ -88,7 +88,7 @@ class BTNode<E> implements Node<E> {
 
     /**
      * Update the element
-     * @param elem
+     * @param elem the element
      */
     public void setElement(E elem) {
         element=elem;
@@ -96,7 +96,7 @@ class BTNode<E> implements Node<E> {
 
     /**
      * Update the left child
-     * @param node
+     * @param node the node
      */
     public void setLeftChild(Node<E> node) {
         leftChild=node;
@@ -104,7 +104,7 @@ class BTNode<E> implements Node<E> {
 
     /**
      * Update the right child
-     * @param node
+     * @param node the node
      */
     public void setRightChild(Node<E> node) {
         rightChild=node;
@@ -112,7 +112,7 @@ class BTNode<E> implements Node<E> {
 
     /**
      * Update the parent
-     * @param node
+     * @param node the node
      */
     public void setParent(Node<E> node) {
         parent=node;
@@ -142,8 +142,8 @@ class BTNode<E> implements Node<E> {
     }
 
     /**
-     *
-     * @return
+     * Gets the further lef element of the tree
+     * @return the element
      */
     BTNode<E> furtherLeftElement() {
         BTNode<E> current = this;
@@ -154,8 +154,8 @@ class BTNode<E> implements Node<E> {
     }
 
     /**
-     *
-     * @return
+     * Gets the further right element
+     * @return the element
      */
     BTNode<E> furtherRightElement() {
         BTNode<E> current = this;

@@ -15,7 +15,6 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
      */
 
 
-    //TODO: Left as an exercise.
     // If exists a entry with this Key, update the node with new element
     // and return the old value of the entry
     // otherwise, insert the newNode, "rebalance" from the insertion position
@@ -77,6 +76,11 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
         return removedValue;
     }
 
+    /**
+     * Searches for the node with the given key
+     * @param key the key of the node
+     * @return the node if there is a node with the given key, null else
+     */
     private BTNode<Entry<K,V>> searchNode(K key) {
         BTNode<Entry<K, V>> currentNode = (BTNode<Entry<K, V>>) root;
         while (currentNode != null) {
@@ -92,6 +96,10 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
         return null;
     }
 
+    /**
+     * Removes the given node and handles all the rotations needed to keep the height rule
+     * @param node the node being removed
+     */
     private void removeNode(BTNode<Entry<K,V>> node) {
         BTNode<Entry<K,V>> nodeToRebalance;
         // Caso 1: É uma folha (Leaf)
@@ -140,6 +148,10 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
     }
 
 
+    /**
+     * Inserts a node and rebalances the tree if needed
+     * @param node the node being inserted
+     */
     protected void insertAndRebalance(BTNode<Entry<K,V>> node) {
         AVLNode<Entry<K,V>> current = (AVLNode<Entry<K,V>>) node;
         while (current != null) {
@@ -159,7 +171,7 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
     }
 
     /**
-     * Verifica se um nó está balanceado (diferença de alturas <= 1).
+     * Checks if the tree is balanced (height differences <= 1)
      */
     private boolean isBalanced(AVLNode<Entry<K,V>> node) {
         if (node == null) return true;
@@ -171,8 +183,8 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
     }
 
     /**
-     * Devolve o filho com maior altura.
-     * Usado para determinar se fazemos rotação à esquerda, direita ou duplas (LL, RR, LR, RL).
+     * Returns the son with the least height
+     * Used to know what type of rotations are needed
      */
     private AVLNode<Entry<K,V>> tallerChild(AVLNode<Entry<K,V>> node) {
 
@@ -196,6 +208,11 @@ public class AVLSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V
     }
 
 
+    /**
+     * Gets the height of a child, depending on its type
+     * @param child the child
+     * @return the height of the child
+     */
     private int getSafeChildHeight(Node<Entry<K, V>> child) {
         if (child == null) return -1;
         if (child instanceof AVLNode) {

@@ -31,13 +31,17 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * currentSize is initialized as 0.
      */
     public DoublyLinkedList() {
-        //TODO: Left as an exercise.
         head = null;
         tail = null;
         currentSize = 0;
 
     }
 
+    /**
+     * Handling the manual serialization of the nodes of the list
+     * @param oos the object output stream
+     * @throws IOException the exception
+     */
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.defaultWriteObject(); // escreve os campos normais (não temos aqui, mas é boa prática)
         oos.writeInt(currentSize); // escreve o tamanho
@@ -49,6 +53,12 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
         oos.flush();
     }
 
+    /**
+     * Handling the manual deserialization of the node of the list
+     * @param ois the object input stream
+     * @throws IOException the IO exception
+     * @throws ClassNotFoundException another exception
+     */
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject(); // lê os campos normais
         int size = ois.readInt(); // lê o tamanho
@@ -65,7 +75,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @return true if list is empty
      */
     public boolean isEmpty() {
-        //TODO: Left as an exercise.
         return currentSize == 0;
     }
 
@@ -75,7 +84,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      */
 
     public int size() {
-        //TODO: Left as an exercise.
         return currentSize;
     }
 
@@ -101,7 +109,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @param element - Element to be inserted
      */
     public void addFirst( E element ) {
-        //TODO: Left as an exercise.
         DoublyListNode<E> newNode = new DoublyListNode<E>(element,null,head);
         if(isEmpty()){
             head = newNode;
@@ -118,7 +125,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @param element - Element to be inserted
      */
     public void addLast( E element ) {
-        //TODO: Left as an exercise.
         DoublyListNode<E> newNode = new DoublyListNode<>(element,tail,null);
         if(isEmpty()) head = newNode;
         else tail.setNext(newNode);
@@ -132,7 +138,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getFirst( ) {
-        //TODO: Left as an exercise.
         if(currentSize == 0) throw new NoSuchElementException();
         return head.getElement();
     }
@@ -143,7 +148,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @throws NoSuchElementException - if size() == 0
      */
     public E getLast( ) {
-        //TODO: Left as an exercise.
         if(currentSize == 0) throw new NoSuchElementException();
         return tail.getElement();
     }
@@ -159,7 +163,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @throws InvalidPositionException if position is not valid in the list
      */
     public E get( int position ) {
-        //TODO: Left as an exercise.
         if(position < 0 || position >= currentSize) throw new InvalidPositionException();
 
         DoublyListNode<E> node = head;
@@ -175,7 +178,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @return position of the first occurrence of the element in the list (or -1)
      */
     public int indexOf( E element ) {
-        //TODO: Left as an exercise.
         DoublyListNode<E> node = head;
         for(int i = 0; i < currentSize; i++){
             if(node.getElement().equals(element)) return i;  // Compare elements
@@ -194,7 +196,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @throws InvalidPositionException - if position is not valid in the list
      */
     public void add( int position, E element ) {
-        //TODO: Left as an exercise.
         if (position < 0 || position > currentSize) throw new InvalidPositionException();
         if (position == 0) {
             addFirst(element);
@@ -219,7 +220,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @throws NoSuchElementException - if size() == 0
      */
     public E removeFirst( ) {
-        //TODO: Left as an exercise.
         if (currentSize == 0) throw new NoSuchElementException();
         E element = head.getElement();
         if (currentSize == 1) {
@@ -239,7 +239,6 @@ public class DoublyLinkedList<E> implements TwoWayList<E>,Serializable {
      * @throws NoSuchElementException - if size() == 0
      */
     public E removeLast( ) {
-        //TODO: Left as an exercise.
         if (currentSize == 0) throw new NoSuchElementException();
         E element = tail.getElement();
         if (currentSize == 1) {

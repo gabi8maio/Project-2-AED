@@ -101,6 +101,11 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
         return getNode(position).getElement();
     }
 
+    /**
+     * Gets the node in the given position
+     * @param position the position of the node
+     * @return the node in the position
+     */
     private SinglyListNode<E> getNode(int position) {
         SinglyListNode<E> node = head;
         for (int i = 0; i < position; i++) {
@@ -189,11 +194,17 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
             this.addMiddle (position, element);
     }
 
+    /**
+     * Handles the case of adding a node in the middle of the list
+     * @param position the position where the node is to be inserted
+     * @param element the element od the node
+     */
     private void addMiddle(int position, E element) {
         SinglyListNode<E> prevNode = this.getNode(position-1);
         SinglyListNode<E> nextNode = prevNode.getNext();
         SinglyListNode<E> newNode = new SinglyListNode<>(element);
         prevNode.setNext(newNode);
+        newNode.setNext(nextNode);
         currentSize++;
     }
 
@@ -259,6 +270,11 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
         return this.removeMiddle(position);
     }
 
+    /**
+     * Handles the case of removing a node in the middle of the list
+     * @param position the position of the node to remove
+     * @return the element of the node being removed
+     */
     private E removeMiddle(int position) {
         SinglyListNode<E> prevNode = this.getNode(position-1);
         SinglyListNode<E> node = prevNode.getNext();

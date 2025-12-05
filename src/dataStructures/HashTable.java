@@ -27,8 +27,12 @@ abstract class HashTable<K,V> implements Map<K,V>{
 
     // Public Static Methods
 
-    // Returns the hash code of the specified key,
-    // which is an integer in the range 0, ..., b-1.
+
+    /**
+     * Returns the hash code of the specified key, which is an integer in the range 0, ...., b-1
+     * @param key the key to be hashed
+     * @return the hash code to the given keu
+     */
     public static int hash( String key ){
 
         int a = 127; // a is a prime number.
@@ -42,9 +46,14 @@ abstract class HashTable<K,V> implements Map<K,V>{
 
     // Protected Static Methods
 
-    // Returns a prime number that is not less than the
-    // specified number; or zero if all such primes are greater
-    // than Integer.MAX VALUE.
+
+
+    /**
+     * Returns a prime number that is not less than the specified number;
+     * or zero if all such primer are greater than Integer.MAX_VALUE
+     * @param number the number
+     * @return a primer number or 0
+     */
     protected static int nextPrime( int number ) {
         if (number <= 2) return 2;
         if (number % 2 == 0) number++;
@@ -57,6 +66,12 @@ abstract class HashTable<K,V> implements Map<K,V>{
         return number;
     }
 
+
+    /**
+     * Checks if a certain number is a prime number
+     * @param n the number being checked
+     * @return true if is prime or false if is not prime
+     */
     private static boolean isPrime (int n){
         int v = 2;
         double limit = Math.sqrt(n);
@@ -66,10 +81,15 @@ abstract class HashTable<K,V> implements Map<K,V>{
         return v > limit && n > 1;
     }
 
-    // Returns true iff the hash table cannot contain more entries.
+
+
+    /**
+     * @return true iff the hash table cannot contain more entries
+     */
     protected boolean isFull () {
         return currentSize == maxSize;
     }
+
     /**
      * Returns true iff the dictionary contains no entries.
      *
