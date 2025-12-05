@@ -148,6 +148,7 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
         return averageStars;
     }
 
+    //this algorithm is never used
     public int findKMP (char [] text, char [] pattern){
         int n = text.length;
         int m = pattern.length;
