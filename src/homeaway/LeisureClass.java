@@ -11,7 +11,14 @@ public class LeisureClass extends ServicesClassAbstract implements Leisure {
     private final double price;
 
 
-
+    /**
+     * The class of leisure services
+     * @param latitude its latitude
+     * @param longitude its longitude
+     * @param price its price
+     * @param value its value (capacity)
+     * @param serviceName the service name
+     */
     public LeisureClass(long latitude, long longitude, double price, int value, String serviceName){
         super(latitude,longitude,value, serviceName);
         this.price = price * (1-((double) value /100));

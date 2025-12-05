@@ -26,6 +26,13 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * Abstract class of services
+     * @param latitude the latitude of the service
+     * @param longitude the longitude of the service
+     * @param value the value of the service (discount or capacity)
+     * @param serviceName the service name
+     */
     public ServicesClassAbstract(long latitude, long longitude, int value, String serviceName) {
         this.serviceName = serviceName;
         this.longitude = longitude;

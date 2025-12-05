@@ -10,11 +10,19 @@ public class ThriftyClass extends StudentsClassAbstract implements Thrifty, Stud
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * Class for thrifty students
+     * @param studentType the type of student (thrifty)
+     * @param name the name of the student
+     * @param country the country of the student
+     * @param lodging the lodging service where the student is staying at
+     */
     ThriftyClass(String studentType, String name, String country, Services lodging) {
         super (studentType, name, country, lodging);
         cheapestEatingPrice = Integer.MAX_VALUE;
     }
 
+    @Override
     public boolean isMoreExpensiveThanCheapest(Services services){
         if(!services.getServiceType().equalsIgnoreCase(TypesOfService.EATING.toString())) return false;
 

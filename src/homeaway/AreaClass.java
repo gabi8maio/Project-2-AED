@@ -58,6 +58,7 @@ public class AreaClass implements Serializable, Area {
         counterOfServicesInsertion =0;
     }
 
+    @Override
     public void createService(String serviceType, long latitude, long longitude, double price, int value, String serviceName) {
 
         Services newService = null;
@@ -376,6 +377,11 @@ public class AreaClass implements Serializable, Area {
             updateTags(tag, serviceToUpdate);
     }
 
+    /**
+     * Updates the tags of a certain service
+     * @param tag the new tags
+     * @param newService the service which the tags will be updated
+     */
     private void updateTags(String tag, Services newService) {
         if (tag == null || tag.trim().isEmpty() || newService == null) return;
 
@@ -398,6 +404,12 @@ public class AreaClass implements Serializable, Area {
         }
     }
 
+    /**
+     * Checks if the service exists in the list given
+     * @param list the list of services
+     * @param service the service (object)
+     * @return true if the service exists
+     */
     private boolean serviceExistsInList(SortedList<Services> list, Services service) {
         Iterator<Services> it = list.iterator();
         while (it.hasNext()) {
@@ -415,6 +427,7 @@ public class AreaClass implements Serializable, Area {
         return servicesByInsertion.iterator();
     }
 
+    @Override
     public Iterator<Map.Entry<String,Students>> getAllStudentsIterator(){
         return allStudents.iterator();
     }
@@ -559,6 +572,7 @@ public class AreaClass implements Serializable, Area {
                 && service.isFull() != null;
     }
 
+    @Override
     public String studentExists(String name) {
         if(allStudents.isEmpty()) return null;
         if(allStudents.get(name.toUpperCase()) == null) return null;
@@ -780,6 +794,11 @@ public class AreaClass implements Serializable, Area {
         return price;
     }
 
+    /**
+     * Checks if is a valid order (if the character is '<' or '>')
+     * @param order the character
+     * @return true if is correct
+     */
     private boolean isCorrectOrder(String order){
         return order.equals(">") || order.equals("<");
     }

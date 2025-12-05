@@ -17,6 +17,13 @@ public abstract class StudentsClassAbstract implements Students, Serializable {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * Abstract class for students
+     * @param type the type of student
+     * @param name the name of the student
+     * @param country the country of th student
+     * @param lodging the lodging service where the student is staying at
+     */
     public StudentsClassAbstract(String type, String name, String country, Services lodging){
         this.type = type;
         this.name = name;

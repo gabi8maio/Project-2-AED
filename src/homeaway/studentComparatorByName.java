@@ -7,6 +7,9 @@ package homeaway;
 import dataStructures.*;
 import java.io.Serializable;
 
+/**
+ * Comparator by name
+ */
 public class studentComparatorByName implements Comparator<Students>, Serializable {
 
     private static final long serialVersionUID = 0L;

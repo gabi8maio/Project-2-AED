@@ -8,6 +8,9 @@ import dataStructures.Comparator;
 
 import java.io.Serializable;
 
+/**
+ * Comparator by number of stars
+ */
 public class ServiceComparatorByStars implements Comparator<Services>, Serializable {
 
     private static final long serialVersionUID = 0L;
