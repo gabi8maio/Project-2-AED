@@ -23,7 +23,6 @@ public class AreaClass implements Serializable, Area {
 
 
     private final Map<String, Services> services;
-    private final TwoWayList<Services>[] servicesByType;
     private final TwoWayList<Services> servicesByInsertion;
     private final TwoWayList<Students>  studentsByInsertion;
     private final List<TwoWayList<Services>> servicesByRank;
@@ -31,7 +30,6 @@ public class AreaClass implements Serializable, Area {
     private final Map<String,TwoWayList<Students>> studentsByCountry;
     private final Map <String, SortedList<Services>> tags;
     private final int MAX_NUM_STARS = 5;
-    private final int NUMBEROFTYPES  = 3;
 
 
     int updateCounter;
@@ -50,7 +48,6 @@ public class AreaClass implements Serializable, Area {
         studentsByCountry = new SepChainHashTable<>();
         allStudents = new RedBlackSortedMap<>();
         servicesByRank = new ListInArray<>(MAX_NUM_STARS);
-        servicesByType = (TwoWayList<Services>[]) new TwoWayList[NUMBEROFTYPES];
         servicesByRank.add(0,new DoublyLinkedList<>());
         servicesByRank.add(1,new DoublyLinkedList<>());
         servicesByRank.add(2,new DoublyLinkedList<>());
