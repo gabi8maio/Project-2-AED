@@ -53,4 +53,12 @@ public interface ServicesChange {
      * @param counter The number of Insertion
      */
     void setNumOfInsertion(int counter);
+
+    /**
+     * Checks if a certain pattern appears in a text
+     * @param text the text to be checked
+     * @param pattern the word being searched
+     * @return the lowest index at which substring pattern begins in the text (or else -1)
+     */
+    int findKMP(char[] text, char[] pattern);
 }

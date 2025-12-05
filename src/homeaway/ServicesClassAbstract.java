@@ -147,5 +147,49 @@ public abstract class ServicesClassAbstract implements Services, ServicesChange{
     public int getAverageStars() {
         return averageStars;
     }
+
+    public int findKMP (char [] text, char [] pattern){
+        int n = text.length;
+        int m = pattern.length;
+        if (m == 0)
+            return 0;
+        int [] fail = computeFailKMP(pattern);
+        int j = 0;
+        int k = 0;
+        while (j < n){
+            if (text[j] == pattern[k]){
+                j++;
+                k++;
+            } else if (k > 0)
+                k = fail[k - 1];
+            else
+                j++;
+        }
+        return -1;
+    }
+
+    /**
+     * Calculate the fails array (LPS)
+     * fail [i] = the size of the greater proper prefix that is also a suffix of pattern
+     * @param pattern the pattern
+     * @return the LPS array
+     */
+    private static int[] computeFailKMP (char[] pattern){
+        int m = pattern.length;
+        int [] fail = new int[m];
+        int j = 1;
+        int k = 0;
+        while (j < m){
+            if (pattern[j] == pattern[k]){
+                fail[j] = k+1;
+                j++;
+                k++;
+            }else if (k > 0)
+                k = fail[k - 1];
+            else
+                j++;
+        }
+        return fail;
+    }
 }
 
