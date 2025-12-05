@@ -1,5 +1,12 @@
 package dataStructures;
 
+//This class may have errors
+
+/**
+ * RedBlackSortedMap implementation
+ * @param <K> Generic key
+ * @param <V> Generic value
+ */
 public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTree<K,V>{
     public RedBlackSortedMap(){
 
@@ -25,6 +32,13 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
     }
 
 
+    /**
+     * This method is used to find where the node will be added (its parent)
+     * @param node the node from where we want to start
+     * @param key the key of the new node
+     * @param value the value of the new node
+     * @return the old value of the node (if there was a node with the same key) or null
+     */
     private V findInsert(RBNode<Entry<K, V>> node, K key, V value) {
         int compare = key.compareTo(node.getElement().key());
         if (compare == 0) {
@@ -54,6 +68,10 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
         }
     }
 
+    /**
+     * Rebalance de tree according to the rule of the black height
+     * @param newNode the node that was recently inserted
+     */
     private void rebalance(RBNode<Entry<K,V>> newNode) {
         RBNode<Entry<K,V>> parent = (RBNode<Entry<K, V>>) newNode.getParent();
         RBNode<Entry<K,V>> grandParent = (RBNode<Entry<K, V>>) parent.getParent();
@@ -79,6 +97,12 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
         }
     }
 
+    /**
+     * Get the uncle of a certain node (the parent's brother of a node)
+     * @param parent the parent of the node
+     * @param grandParent the grandparent (parent of the parent) of the node
+     * @return the uncle's node
+     */
     private RBNode<Entry<K,V>> getUncle(RBNode<Entry<K,V>> parent, RBNode<Entry<K,V>> grandParent) {
         RBNode<Entry<K,V>> uncle;
 
@@ -91,7 +115,7 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
     }
 
     /**
-     *
+     * Removes the node with the given key from the tree
      * @param key whose entry is to be removed from the map
      * @return the old value, null if there wasn't an element with that key
      */
@@ -109,6 +133,10 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
         }
     }
 
+    /**
+     * Handles the 4 different options of removing a node
+     * @param node the node to be removed
+     */
     private void removeOptions(RBNode<Entry<K,V>> node) {
         RBNode<Entry<K,V>> parent = (RBNode<Entry<K,V>>) node.getParent();
         if (node.isLeaf()) {
@@ -127,6 +155,12 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
         }
     }
 
+    /**
+     * Removes the node and does all the operations needed after the removal
+     * @param parent the parent of the node
+     * @param remNode the removed node
+     * @param newChild the child of the removed node
+     */
     private void removeNode(RBNode<Entry<K,V>> parent, RBNode<Entry<K,V>> remNode, RBNode<Entry<K,V>> newChild) {
         if (parent == null) {
             root = newChild;
@@ -150,6 +184,11 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
         }
     }
 
+    /**
+     * Handles the case of double black which happens after removing a black node of the tree
+     * @param parent the parent of the removed node
+     * @param remNode the removed node
+     */
     private void doubleBlack(RBNode<Entry<K,V>> parent, RBNode<Entry<K,V>> remNode) {
         RBNode<Entry<K,V>> sibling = getUncle(remNode, parent);
 
@@ -180,6 +219,11 @@ public class RedBlackSortedMap <K extends Comparable<K>,V> extends AdvancedBSTre
         }
     }
 
+    /**
+     * Handles the case of the double black in case of the brother having a red child
+     * @param parent the parent of the node being removed
+     * @param redChild the red child
+     */
     private void handleRedChild(RBNode<Entry<K, V>> parent, RBNode<Entry<K, V>> redChild) {
         redChild.setBlack();
         RBNode<Entry<K,V>> newRoot = (RBNode<Entry<K, V>>) restructure(redChild);
